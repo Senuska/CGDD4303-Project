@@ -4,9 +4,6 @@
  * (Exporting enchant.js class to global namespace.
  *  ex. enchant.Sprite -> Sprite etc..)
  *
- * enchant.js を使う前に必要な処理。
- * (enchant.js 本体や、読み込んだプラグインの中で定義されている enchant.Foo, enchant.Plugin.Bar などのクラスを、
- *  それぞれグローバルの Foo, Bar にエクスポートする。)
  */
 enchant();
 
@@ -16,41 +13,31 @@ enchant();
  * The function which will be executed after loading page.
  * Command in enchant.js such as "new Core();" will cause an error if executed before entire page is loaded.
  *
- * ページがロードされた際に実行される関数。
- * すべての処理はページがロードされてから行うため、 window.onload の中で実行する。
- * 特に new Core(); は、<body> タグが存在しないとエラーになるので注意。
  */
 window.onload = function(){
     /**
      * new Core(width, height)
      *
      * Make instance of enchant.Core class. Set window size to 320 x 320
-     * Core オブジェクトを作成する。
-     * 画面の大きさは 320ピクセル x 320ピクセル に設定する。
      */
-    var game = new Core(320, 320);
+    var game = new Core(400, 400);
 
     /**
      * Core.fps
      *
-     * Set fps (frame per second) in this game to 15.
-     * ゲームの fps (frame per second) を指定する。この場合、1秒間あたり15回画面が更新される。
+     * Set fps (frame per second) in this game to 30.
      */
-    game.fps = 15;
+    game.fps = 30;
     /**
-     * Core#preload
+     * Core.preload
      *
      * You can preload all assets files before starting the game.
-     * Set needed file lists in relative/absolute path for attributes of Core#preload
-     * 必要なファイルを相対パスで引数に指定する。 ファイルはすべて、ゲームが始まる前にロードされる。
+     * Set needed file lists in relative/absolute path for attributes of Core.preload
      */
-    game.preload("chara1.png");
+    game.preload("Background.png", "Cannon.png", "Bullet.png");
 
     /**
-     * Core#onload
-     *
-     * ロードが完了した直後に実行される関数を指定している。
-     * onload プロパティは load イベントのリスナとして働くので、以下の2つの書き方は同じ意味。
+     * Core.onload
      *
      * game.onload = function(){
      *     // code
@@ -61,96 +48,55 @@ window.onload = function(){
      * })
      */
     game.onload = function(){
-        /**
-         * new Sprite(width, height)
-         * スプライトオブジェクトを作成する。
-         * Sprite は、Entity, Node, EventTarget を継承しており、それぞれのメソッドやプロパティを使うことができる。
-         */
-        bear = new Sprite(32, 32);
 
-        /**
-         * Sprite.image {Object}
-         * Core#preload で指定されたファイルは、Core.assets のプロパティとして格納される。
-         * Sprite.image にこれを代入することで、画像を表示することができる
-         */
-        bear.image = game.assets["chara1.png"];
+        backgroundImage = new Sprite(400, 400);
+        cannon = new Sprite(100, 50);
+        bullet = new Sprite(50, 50);
 
-        /**
-         * Node.x Node.y {Number}
-         * x, y 座標を指定する。
-         * viewport の大きさに合わせて画面が拡大縮小されている場合も、
-         * オリジナルの座標系で指定できる。
-         */
-        bear.x = 0;
-        bear.y = 0;
+        backgroundImage.image = game.assets["Background.png"];
+        cannon.image = game.assets["Cannon.png"];
+        bullet.image = game.assets["Bullet.png"];
 
-        /**
-         * Sprite.frame {Number}
-         * (width, height) ピクセルの格子で指定された画像を区切り、
-         * 左上から数えて frame 番目の画像を表示することができる。
-         * デフォルトでは、0:左上の画像が表示される。
-         * このサンプルでは、シロクマが立っている画像を表示する (chara1.gif 参照)。
-         */
-        bear.frame = 5;
-        /**
-         * Group#addChild(node) {Function}
-         * オブジェクトをノードツリーに追加するメソッド。
-         * ここでは、クマの画像を表示するスプライトオブジェクトを、rootScene に追加している。
-         * Core.rootScene は Group を継承した Scene クラスのインスタンスで、描画ツリーのルートになる特別な Scene オブジェクト。
-         * この rootScene に描画したいオブジェクトを子として追加する (addChild) ことで、毎フレーム描画されるようになる。
-         * 引数には enchant.Node を継承したクラス (Entity, Group, Scene, Label, Sprite..) を指定する。
-         */
-        game.rootScene.addChild(bear);
+        backgroundImage.x = 0;
+        backgroundImage.y = 0;
+        
+        cannon.x = 50;
+        cannon.y = 250;
+        
+        bullet.x = 100;
+        bullet.y = 0;
 
-        /**
-         * EventTarget#addEventListener(event, listener)
-         * イベントに対するリスナを登録する。
-         * リスナとして登録された関数は、指定されたイベントの発行時に実行される。
-         * よく使うイベントには、以下のようなものがある。
-         * - "touchstart" : タッチ/クリックされたとき
-         * - "touchmove" : タッチ座標が動いた/ドラッグされたとき
-         * - "touchend" : タッチ/クリックが離されたとき
-         * - "enterframe" : 新しいフレームが描画される前
-         * - "exitframe" : 新しいフレームが描画された後
-         * enchant.js やプラグインに組み込まれたイベントは、それぞれのタイミングで自動で発行されるが、
-         * EventTarget#dispatchEvent で任意のイベントを発行することもできる。
-         *
-         * ここでは、右に向かって走っていくアニメーションを表現するために、
-         * 新しいフレームが描画される前に、毎回クマの画像を切り替え、x座標を1増やすという処理をリスナとして追加する。
-         */
-        bear.addEventListener("enterframe", function(){
-            /**
-             * クマを走らせるために、x座標をインクリメントしている。
-             * この無名関数 function(){ ... } は enterframe イベントのリスナなので、毎フレーム実行される。
-             */
-            this.x += 1;
+        backgroundImage.frame = 0;
+        cannon.frame = 0;
+        bullet.frame = 0;
+        
+        game.rootScene.addChild(backgroundImage);
+        game.rootScene.addChild(cannon);
+      
 
-            /**
-             * this.age (Node.age) は、クマのオブジェクトが今までに何回描画されたか
-             * クマの画像を変えて走るアニメーションを表現するために、
-             * frame を 6 -> 7 -> 6 -> 7.. と順番に変えている。
-             */
-            this.frame = this.age % 2 + 6;
+        /*
+          Add an event to an object:
+
+          EventTarget.addEventListener(event, listener)
+         */         
+        	cannon.addEventListener("touchstart", function(){
+        		bullet.x = 100;
+        		bullet.y = 0;
+            	game.rootScene.addChild(bullet);  
+        	});
+		
+		
+        bullet.addEventListener("enterframe", function(){
+
+            this.x += 10;
+            
+            if(this.x >= 400)
+            {
+            	game.rootScene.removeChild(this);	
+            }
         });
 
-        /**
-         * タッチされると消える処理を実現するために、
-         * touchstart イベントが起こったとき、クマが消える処理をリスナとして追加する。
-         */
-        bear.addEventListener("touchstart", function(){
-            /**
-             * クマを game.rootScene から削除する。
-             * Group#addChild の逆は Group#removeChild。
-             */
-            game.rootScene.removeChild(bear);
-        });
     };
 
-    /**
-     * Core#start
-     * ゲームを開始する。この関数を実行するまで、ゲームは待機状態となる。
-     * 代わりに Core#debug を使うことで、デバッグモードで起動することができる。
-     * Core#pause(); で一時停止し、 Core#resume(); で再開することができる。
-     */
     game.start();
 };
