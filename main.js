@@ -1,32 +1,59 @@
 enchant();
 
 window.onload = function(){
-    var game = new Core(320, 320);
-
-    game.fps = 15;
-    game.preload("chara1.png");
-
+    var game = new Core(800, 600);
+	var menu_scene = new Scene();
+	var play_scene = new Scene();
+    game.fps = 30;
+    game.preload("chara1.png", "button.png");
+	
+	
     game.onload = function(){
-        bear = new Sprite(32, 32);
+		//Define the Menu Scene
+		game.pushScene(menu_scene);
+		
+		play_button = new Sprite(64, 32);
 
-        bear.image = game.assets["chara1.png"];
-
-        bear.x = 0;
-        bear.y = 0;
-
-        bear.frame = 0;
-        game.rootScene.addChild(bear);
-
-
-        game.rootScene.addEventListener('touchstart', function(e){
-            bear.x = e.localX
-			bear.y = e.localY
+		play_button.image = game.assets["button.png"];
+		
+		play_button.x = 800/2 - 32;
+		play_button.y = 600/2
+		menu_scene.addChild(play_button);
+		
+		//Handles input for the play button
+        menu_scene.addEventListener('touchstart', function(e){
+			if(e.localX > play_button.x && e.localX < play_button.x + 64)
+			{
+				if(e.localY > play_button.y && e.localY  < play_button.y + 32)
+				{
+					game.popScene();
+					game.pushScene(play_scene);
+				}
+			}
+        });
+		
+		//Define the Play Scene
+		back_button = new Sprite(32, 32);
+		
+		back_button.image = game.assets["button.png"];
+		
+		back_button.x = 0;
+		back_button.y = 0;
+		
+		play_scene.addChild(back_button);
+		
+		play_scene.addEventListener('touchstart', function(e){
+			//Handles input for the back button
+			if(e.localX > back_button.x && e.localX < back_button.x + 32)
+			{
+				if(e.localY > back_button.y && e.localY  < back_button.y + 32)
+				{
+					game.popScene();
+					game.pushScene(menu_scene);
+				}
+			}
         });
 
-        game.rootScene.addEventListener('touchmove', function(e){
-            bear.x = e.localX
-			bear.y = e.localY
-        });
     };
 
     game.start();
