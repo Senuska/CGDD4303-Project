@@ -50,29 +50,17 @@ var b2Vec2 = Box2D.Common.Math.b2Vec2
     , b2DebugDraw = Box2D.Dynamics.b2DebugDraw
     , b2MouseJointDef = Box2D.Dynamics.Joints.b2MouseJointDef;
 
-/**
- * @type {Object}
- */
 enchant.box2d = {};
 
 (function() {
     var WORLD_SCALE = 32;
     var world;
 
-    /**
-     * Spriteの種類（スタティック）
-     * @type {Number}
-     */
+	//@type {Number}
+	
     enchant.box2d.STATIC_SPRITE = 0;
-    /**
-     * Spriteの種類（ダイナミック）
-     * @type {Number}
-     */
     enchant.box2d.DYNAMIC_SPRITE = 2;
 
-    /**
-     * @scope enchant.box2d.PhysicsWorld.prototype
-     */
     enchant.box2d.PhysicsWorld = enchant.Class.create({
         /**
          * 物理シミュレーションを行う世界のクラス

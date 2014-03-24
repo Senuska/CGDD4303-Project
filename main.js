@@ -1,72 +1,53 @@
-//Makes enchant.js global namespace
 enchant();
+
+var game, physicsWorld;
 
 window.onload = function(){
 
-	//Sets window size of core
-    var game = new Core(400, 400);
+	//Window size of game
+    game = new Game(400, 400);
     game.fps = 30;
-	
-	//Preloads assets for in-game use
-    game.preload("Background.png", "Cannon.png", "Bullet.png");
+	game.preload("Background.png", "Cannon.png", "DrillBall.png");
 	
 	//Code for game is set right after it begins. (First scene, starting menu, etc)
     game.onload = function(){
 		
-        backgroundImage = new Sprite(400, 400);
-        cannon = new Sprite(100, 50);
-        var bullet = new Sprite(50, 50);
-
-        backgroundImage.image = game.assets["Background.png"];
-        cannon.image = game.assets["Cannon.png"];
-        bullet.image = game.assets["Bullet.png"];
-
-        backgroundImage.x = 0;
-        backgroundImage.y = 0;
+		physicsWorld = new PhysicsWorld(0, 9.8);
+		
+        var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
+        floor.image = game.assets["Background.png"];
+        floor.x = 0;
+        floor.y = 300;
         
-        cannon.x = 50;
-        cannon.y = 250;
+        var cannon = new Sprite(100, 50);
+        cannon.image = game.assets["Cannon.png"];    
+		cannon.x = 50;
+		cannon.y = 250;
         
-        bullet.x = cannon.x;
-        bullet.y = cannon.y;
-        bullet.visible = false;
-        
-        game.rootScene.addChild(backgroundImage);
-        game.rootScene.addChild(bullet);
+        game.rootScene.addChild(floor);
         game.rootScene.addChild(cannon);
         
-        //EventTarget.addEventListener(event, listener)      
-        cannon.addEventListener("touchstart", function(){
-        	bullet.x = cannon.x;
-        	bullet.y = cannon.y;
-            bullet.visible = true; 
-        });
-		
-		cannon.addEventListener("enterframe", function(){
-			if(game.input.up && this.rotation > -90) 
-			{
-				this.rotate(-1);
-			}
-			if(game.input.down && this.rotation < 0)
-			{
-			 	this.rotate(1);	
-			}
-			if(game.input.a)
-			{
-				bullet.x = cannon.x;
-        		bullet.y = cannon.y;
-            	game.rootScene.addChild(bullet);  
-			}
-        });
+        //EventTarget.addEventListener(event, listener)        
         
-        bullet.addEventListener("enterframe", function(){
-        	if(this.visible)
-        	{
-            	this.x += 10;
-            	if(this.x >= 400) {
-            		this.visible = false;	
-            	}        		
-        	}
+        game.rootScene.addEventListener("enterframe", function () {
+        	physicsWorld.step(game.fps);
+        });
+
+   
+        cannon.addEventListener("touchstart", function(){
+        	var drill = new PhyCircleSprite(8, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.2, true);
+        	drill.image = game.assets["DrillBall.png"];
+        	drill.x = (Math.cos(this.rotation * 3.14159/180) * (cannon.width / 2)) + (cannon.x + (cannon.width / 2) - (drill.width / 2));
+        	drill.y = (Math.sin(this.rotation * 3.14159/180) * cannon.height) + (cannon.y + ((cannon.height / 2) - (drill.height / 2)));
+        	
+        	// Multiply by 5 as a placeholder for power.
+            drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * 5, Math.sin(cannon.rotation * 3.14159/180) * 5));
+            game.rootScene.addChild(drill); 
+        });
+        		
+		cannon.addEventListener("enterframe", function(){
+			if(game.input.up && this.rotation > -90) this.rotate(-1);					
+			if(game.input.down && this.rotation < 0) this.rotate(1);
         });
     };
 
