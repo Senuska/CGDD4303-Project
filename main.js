@@ -7,8 +7,7 @@ window.onload = function(){
     	var menu_scene = new Scene();
     	var play_scene = new Scene();
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/Background.png", "assets/Cannon.png", "assets/DrillBall.png");
-	
+	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
     game.onload = function(){
 		
 		// ----------------------
@@ -39,43 +38,83 @@ window.onload = function(){
 		// Define the Play Scene
 		// ----------------------
 		
+		// Creates the floor of the level
+		var mapFloor = new Map(16, 16);
+        mapFloor.image = game.assets["assets/tileset.png"];
+        mapFloor.y = 300;
+        mapFloor.loadData(
+            [
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],	
+			]
+		);
+		
+		// Creates the test wall of the level
+		var mapWall = new Map(16, 16);
+		
+		// Store it in an array for changing the map (game won't recognize map changes)
+		var mapValues = [
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+			];
+		mapWall.image = game.assets["assets/tileset.png"];
+		mapWall.x = 400;
+		mapWall.y = 16;
+		mapWall.loadData(mapValues);
+		
 		// Local constant for maximum cannon power
 		const MAX_CANNON_POWER = 3;
+		const CANNON_TEXT = "Cannon Power: ";
 		play_scene.backgroundColor = "blue";
 		
+		// Binds spacebar to a-button
+		game.keybind(32, 'a');
+		
+		// Label for cannon power
+		var powerLabel = new Label(CANNON_TEXT);
+		powerLabel.x = 200;
+		
 		// Display values for back_button
-		back_button = new Sprite(32, 32);
+		var back_button = new Sprite(32, 32);
 		back_button.image = game.assets["assets/button.png"];
 		back_button.x = 0;
 		back_button.y = 0;
-		play_scene.addChild(back_button);
 		
-		//function(staticOrDynamic, density, friction, restitution, awake)
-        var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
-        floor.image = game.assets["assets/Background.png"];
-        floor.x = 0;
-        floor.y = 300;
-        
+      	// Physics objects follow this format: function(staticOrDynamic, density, friction, restitution, awake)
+        // var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
+
         var cannon = new Sprite(100, 50);
-        cannon.image = game.assets["assets/Cannon.png"];    
+        cannon.image = game.assets["assets/cannon.png"];    
 		cannon.x = 50;
-		cannon.y = 250;
+		cannon.y = 250; 
+		cannon.power = 0.1;     		//Current cannon launch power
+		cannon.buildingPower = false;	// Prevents machine gun cannon
         
-       	play_scene.addChild(floor);
-        play_scene.addChild(cannon);
-        
-        //Binds spacebar to 'a' button
-        game.keybind(32, 'a');
-        
-        //Prevents machine gun cannon
-        var buildingPower = false;
-        var cannonPower = 0.1;
-        
+        // Logic for physics steps
         play_scene.addEventListener("enterframe", function () {
         	physicsWorld.step(game.fps);
+        	powerLabel.text = (CANNON_TEXT + cannon.power);
         });
         
-        // Input logic for back_button
+        // Logic for back_button
 		play_scene.addEventListener('touchstart', function(mousePos){
 			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
 			{
@@ -87,39 +126,59 @@ window.onload = function(){
 			}
         });
 
+		// Logic for cannon
         cannon.addEventListener("enterframe", function(){
-        	if(game.input.a && buildingPower == false) buildingPower = true;
-        	else if(game.input.a && buildingPower == true)
+        	if(game.input.a && cannon.buildingPower == false) cannon.buildingPower = true;
+        	else if(game.input.a && cannon.buildingPower == true)
         	{
-				cannonPower += 0.1;
-				if(cannonPower > MAX_CANNON_POWER) cannonPower = MAX_CANNON_POWER;
+				cannon.power += 0.1;
+				if(cannon.power > MAX_CANNON_POWER) cannon.power = MAX_CANNON_POWER;
         	}
         	
-        	if(!game.input.a && buildingPower == true)
+        	if(!game.input.a && cannon.buildingPower == true)
         	{
         		var drill = new PhyCircleSprite(8, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.2, true);
-       		 	drill.image = game.assets["assets/DrillBall.png"];
+       		 	drill.image = game.assets["assets/drillball.png"];
        			drill.x = (Math.cos(this.rotation * 3.14159/180) * (cannon.width / 2)) + (cannon.x + (cannon.width / 2) - (drill.width / 2));
        	 		drill.y = (Math.sin(this.rotation * 3.14159/180) * cannon.height) + (cannon.y + ((cannon.height / 2) - (drill.height / 2)));
         	
-         		drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * cannonPower, Math.sin(cannon.rotation * 3.14159/180) * cannonPower));
+         		drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * cannon.power, Math.sin(cannon.rotation * 3.14159/180) * cannon.power));
        		    play_scene.addChild(drill);
-  	    	 	/*
-  	    	 		MEANT FOR REMOVING OBJECTS FROM THE GAME
-  	    	 		
-  	    	 		drill.addEventListener("enterframe", function(){
-           	    	if(drill.x > 400 || drill.x < 0)
-              		    drill.destroy();
-           	   		})
-           	   		*/
-           	   	buildingPower = false;
-           	   	cannonPower = 0.1;
+  	    	 	drill.addEventListener("enterframe", function(){	
+  	    	 		if (drill.intersect(mapWall)) 
+  	    	 		{
+						/* Do math to figure out where drill is compared to block array
+							
+							mapValues[(drill.x / 16)][(drill.y / 16)] = (-1);
+  	    	 			*/
+  	    	 			
+  	    	 			/* Reloads changed array to map for drawing!
+  	    	 			
+							mapWall.loadData(mapValues);
+						*/
+						
+						/* Evaluate right conditions to remove drill with
+						
+  	    	 				drill.destroy();
+  	    	 			*/
+  	    	 		}
+           	   	});
+           	   		
+           	   	cannon.buildingPower = false;
+           	   	cannon.power = 0.0;
         	}
         	
         	if(game.input.up && this.rotation > -90) this.rotate(-1);					
 			if(game.input.down && this.rotation < 0) this.rotate(1);
         });
+        
+        // Adds all items to the play_scene
+        play_scene.addChild(back_button);
+        play_scene.addChild(mapFloor);
+        play_scene.addChild(mapWall);
+        play_scene.addChild(cannon);
+        play_scene.addChild(powerLabel);
+        
     };
-
     game.start();
 };
