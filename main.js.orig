@@ -1,6 +1,7 @@
 enchant();
 
 window.onload = function(){
+<<<<<<< HEAD
     var game = new Core(800, 600);
 	var menu_scene = new Scene();
 	var play_scene = new Scene();
@@ -60,6 +61,16 @@ window.onload = function(){
         });
 
     };
+=======
+
+    var game = new Core(400, 400);
+    game.fps = 30;
+    game.preload("Background.png", "Cannon.png", "Bullet.png");
+
+}
+
+    game.onload = function(){
+>>>>>>> master
 
     game.start();
-};
+}
