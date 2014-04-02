@@ -38,7 +38,7 @@ window.onload = function(){
 		// Define the Play Scene
 		// ----------------------
 		
-		// Creates the floor of the level
+		// Creates the floor of the level (use map editor: http://enchantjs.com/resource/the-map-editor/)
 		var mapFloor = new Map(16, 16);
         mapFloor.image = game.assets["assets/tileset.png"];
         mapFloor.y = 300;
@@ -55,7 +55,7 @@ window.onload = function(){
 		var mapWall = new Map(16, 16);
 		
 		// Store it in an array for changing the map (game won't recognize map changes)
-		var mapValues = [
+		mapWall.values = [
 				[2, 2, 2, 2, 2],
 				[2, 2, 2, 2, 2],
 				[2, 2, 2, 2, 2],
@@ -78,7 +78,7 @@ window.onload = function(){
 		mapWall.image = game.assets["assets/tileset.png"];
 		mapWall.x = 400;
 		mapWall.y = 16;
-		mapWall.loadData(mapValues);
+		mapWall.loadData(mapWall.values);
 		
 		// Local constant for maximum cannon power
 		const MAX_CANNON_POWER = 3;
@@ -105,13 +105,13 @@ window.onload = function(){
         cannon.image = game.assets["assets/cannon.png"];    
 		cannon.x = 50;
 		cannon.y = 250; 
-		cannon.power = 0.1;     		//Current cannon launch power
+		cannon.power = 0.0;     		//Current cannon launch power
 		cannon.buildingPower = false;	// Prevents machine gun cannon
         
         // Logic for physics steps
         play_scene.addEventListener("enterframe", function () {
         	physicsWorld.step(game.fps);
-        	powerLabel.text = (CANNON_TEXT + cannon.power);
+        	powerLabel.text = (CANNON_TEXT + cannon.power.toFixed(1));
         });
         
         // Logic for back_button
@@ -147,20 +147,26 @@ window.onload = function(){
   	    	 	drill.addEventListener("enterframe", function(){	
   	    	 		if (drill.intersect(mapWall)) 
   	    	 		{
-						/* Do math to figure out where drill is compared to block array
-							
-							mapValues[(drill.x / 16)][(drill.y / 16)] = (-1);
+  	    	 			/*
+  	    	 				Bug: Only removes on first shot.
+  	    	 				Bug: Crashes if you hit corners.
+  	    	 				Bug: Sometimes removes incorrect blocks or not at all.
   	    	 			*/
   	    	 			
-  	    	 			/* Reloads changed array to map for drawing!
+					// Remove block found at the intersection site
+					var hitY = ((mapWall.y - drill.y) / 16).toFixed(0);
+					var hitX = ((mapWall.x - drill.x) / 16).toFixed(0);
+					
+					if (hitY < 0) hitY = -hitY;
+					if (hitX < 0) hitX = -hitX;
+					
+						mapWall.values[hitY][hitX] = (-1);
   	    	 			
-							mapWall.loadData(mapValues);
-						*/
-						
-						/* Evaluate right conditions to remove drill with
-						
-  	    	 				drill.destroy();
-  	    	 			*/
+  	    	 		// Loads changed array data into map for drawing
+						mapWall.loadData(mapWall.values);
+
+					// If drill velocity drops to a certain speed, remove the drill
+					 if (drill.velocity.x <= 0.5 && drill.velocity.y <= 0.5) drill.destroy();
   	    	 		}
            	   	});
            	   		
@@ -178,7 +184,6 @@ window.onload = function(){
         play_scene.addChild(mapWall);
         play_scene.addChild(cannon);
         play_scene.addChild(powerLabel);
-        
     };
     game.start();
 };
