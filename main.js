@@ -6,7 +6,7 @@ window.onload = function(){
 	var play_scene = new Scene();
 	game.fps = 30;
     game.preload("chara1.png", "button.png");
-	
+}
     game.onload = function(){
 		//Define the Menu Scene
 		game.pushScene(menu_scene);
@@ -58,8 +58,7 @@ window.onload = function(){
 				}
 			}
         });
-
-    game.onload = function(){
+	}
 
     game.start();
 }
