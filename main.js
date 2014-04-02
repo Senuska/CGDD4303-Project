@@ -7,7 +7,7 @@ window.onload = function(){
     	var menu_scene = new Scene();
     	var play_scene = new Scene();
     game.fps = 30;
-	game.preload("chara1.png", "button.png", "Background.png", "Cannon.png", "DrillBall.png");
+	game.preload("assets/chara1.png", "assets/button.png", "assets/Background.png", "assets/Cannon.png", "assets/DrillBall.png");
 	
     game.onload = function(){
 		
