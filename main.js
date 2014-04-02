@@ -1,21 +1,67 @@
 enchant();
-
-var game, physicsWorld;
-const MAX_CANNON_POWER = 3;
-
 window.onload = function(){
 
-	//Window size of game
-    game = new Game(800, 600);
+	// Creates game variable and preloads art assets for every scene
+    var game = new Game(800, 600);
+    var physicsWorld = new PhysicsWorld(0, 9.8);
+    	var menu_scene = new Scene();
+    	var play_scene = new Scene();
     game.fps = 30;
-	game.preload("Background.png", "Cannon.png", "DrillBall.png");
+	game.preload("chara1.png", "button.png", "Background.png", "Cannon.png", "DrillBall.png");
 	
-	//Code for game is set right after it begins. (First scene, starting menu, etc)
     game.onload = function(){
 		
-		game.rootScene.backgroundColor = "blue";
-		physicsWorld = new PhysicsWorld(0, 9.8);
+		// ----------------------
+		// Define the Menu Scene
+		// ----------------------
+		game.pushScene(menu_scene);
 		
+		// Display values for play_button
+		play_button = new Sprite(64, 32);
+		play_button.image = game.assets["button.png"];
+		play_button.x = 800/2 - 32;
+		play_button.y = 600/2
+		menu_scene.addChild(play_button);
+		
+		// Input logic for play_button
+        menu_scene.addEventListener('touchstart', function(mousePos){
+			if(mousePos.localX > play_button.x && mousePos.localX < play_button.x + 64)
+			{
+				if(mousePos.localY > play_button.y && mousePos.localY  < play_button.y + 32)
+				{
+					game.popScene();
+					game.pushScene(play_scene);
+				}
+			}
+        });
+        
+		// ----------------------
+		// Define the Play Scene
+		// ----------------------
+		
+		// Display values for back_button
+		back_button = new Sprite(32, 32);
+		back_button.image = game.assets["button.png"];
+		back_button.x = 0;
+		back_button.y = 0;
+		play_scene.addChild(back_button);
+		
+		// Input logic for back_button
+		play_scene.addEventListener('touchstart', function(mousePos){
+			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
+			{
+				if(mousePos.localY > back_button.y && mousePos.localY  < back_button.y + 32)
+				{
+					game.popScene();
+					game.pushScene(menu_scene);
+				}
+			}
+        });
+		
+		// Local constant for maximum cannon power
+		const MAX_CANNON_POWER = 3;
+		
+		//function(staticOrDynamic, density, friction, restitution, awake)
         var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
         floor.image = game.assets["Background.png"];
         floor.x = 0;
@@ -35,8 +81,6 @@ window.onload = function(){
         //Prevents machine gun cannon
         var buildingPower = false;
         var cannonPower = 0.1;
-        
-        //EventTarget.addEventListener(event, listener)        
         
         game.rootScene.addEventListener("enterframe", function () {
         	physicsWorld.step(game.fps);
@@ -70,10 +114,8 @@ window.onload = function(){
            	   	buildingPower = false;
            	   	cannonPower = 0.1;
         	}
-        });
-        		
-		cannon.addEventListener("enterframe", function(){
-			if(game.input.up && this.rotation > -90) this.rotate(-1);					
+        	
+        	if(game.input.up && this.rotation > -90) this.rotate(-1);					
 			if(game.input.down && this.rotation < 0) this.rotate(1);
         });
     };
