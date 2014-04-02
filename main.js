@@ -59,7 +59,7 @@ window.onload = function(){
 			}
         });
 
-    };
+    game.onload = function(){
 
     game.start();
-};
+}
