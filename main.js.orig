@@ -1,58 +1,157 @@
 enchant();
-
 window.onload = function(){
 <<<<<<< HEAD
     var game = new Core(800, 600);
 	var menu_scene = new Scene();
 	var play_scene = new Scene();
 	game.fps = 30;
-    game.preload("chara1.png", "button.png");
-	
-    game.onload = function(){
-		//Define the Menu Scene
-		game.pushScene(menu_scene);
-        backgroundImage = new Sprite(400, 400);
-		
-		play_button = new Sprite(64, 32);
-        backgroundImage.image = game.assets["Background.png"];
+	game.scale = 0.5f;
+    game.preload("chara1.png", "button.png", "Background.png");
+=======
 
+	// Creates game variable and preloads art assets for every scene
+    var game = new Game(800, 600);
+    var physicsWorld = new PhysicsWorld(0, 9.8);
+    	var menu_scene = new Scene();
+    	var play_scene = new Scene();
+    game.fps = 30;
+	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
+>>>>>>> f64602239bd743ff2a23075bade11c19ab8a7ce1
+    game.onload = function(){
+		
+		// ----------------------
+		// Define the Menu Scene
+		// ----------------------
+		game.pushScene(menu_scene);
+<<<<<<< HEAD
+        backgroundImage = new Sprite(400, 400);
+		play_button = new Sprite(64, 32);
+		
+        backgroundImage.image = game.assets["Background.png"];
 		play_button.image = game.assets["button.png"];
-        backgroundImage.x = 0;
+        
+		backgroundImage.x = 0;
         backgroundImage.y = 0;
-        
-		play_button.x = 800/2 - 32;
-		play_button.y = 600/2
+        play_button.x = 800/2 - 32;
+		play_button.y = 600/2;
+		
 		menu_scene.addChild(play_button);
-        
+        menu_scene.addChild(backgroundImage);
+		
 		//Handles input for the play button
         menu_scene.addEventListener('touchstart', function(e){
 			if(e.localX > play_button.x && e.localX < play_button.x + 64)
+=======
+		
+		// Display values for play_button
+		play_button = new Sprite(64, 32);
+		play_button.image = game.assets["assets/button.png"];
+		play_button.x = 800/2 - 32;
+		play_button.y = 600/2
+		menu_scene.addChild(play_button);
+		
+		// Input logic for play_button
+        menu_scene.addEventListener('touchstart', function(mousePos){
+			if(mousePos.localX > play_button.x && mousePos.localX < play_button.x + 64)
+>>>>>>> f64602239bd743ff2a23075bade11c19ab8a7ce1
 			{
-				if(e.localY > play_button.y && e.localY  < play_button.y + 32)
+				if(mousePos.localY > play_button.y && mousePos.localY  < play_button.y + 32)
 				{
 					game.popScene();
 					game.pushScene(play_scene);
 				}
 			}
+<<<<<<< HEAD
 		});
-
-        backgroundImage.frame = 0;
+=======
+        });
+        
+		// ----------------------
+		// Define the Play Scene
+		// ----------------------
 		
-		//Define the Play Scene
-		back_button = new Sprite(32, 32);
+		// Creates the floor of the level
+		var mapFloor = new Map(16, 16);
+        mapFloor.image = game.assets["assets/tileset.png"];
+        mapFloor.y = 300;
+        mapFloor.loadData(
+            [
+				[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],
+				[1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1],	
+			]
+		);
+>>>>>>> f64602239bd743ff2a23075bade11c19ab8a7ce1
 		
-		back_button.image = game.assets["button.png"];
+		// Creates the test wall of the level
+		var mapWall = new Map(16, 16);
 		
+		// Store it in an array for changing the map (game won't recognize map changes)
+		var mapValues = [
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+				[2, 2, 2, 2, 2],
+			];
+		mapWall.image = game.assets["assets/tileset.png"];
+		mapWall.x = 400;
+		mapWall.y = 16;
+		mapWall.loadData(mapValues);
+		
+		// Local constant for maximum cannon power
+		const MAX_CANNON_POWER = 3;
+		const CANNON_TEXT = "Cannon Power: ";
+		play_scene.backgroundColor = "blue";
+		
+		// Binds spacebar to a-button
+		game.keybind(32, 'a');
+		
+		// Label for cannon power
+		var powerLabel = new Label(CANNON_TEXT);
+		powerLabel.x = 200;
+		
+		// Display values for back_button
+		var back_button = new Sprite(32, 32);
+		back_button.image = game.assets["assets/button.png"];
 		back_button.x = 0;
 		back_button.y = 0;
 		
-		play_scene.addChild(back_button);
-		
-		play_scene.addEventListener('touchstart', function(e){
-			//Handles input for the back button
-			if(e.localX > back_button.x && e.localX < back_button.x + 32)
+      	// Physics objects follow this format: function(staticOrDynamic, density, friction, restitution, awake)
+        // var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
+
+        var cannon = new Sprite(100, 50);
+        cannon.image = game.assets["assets/cannon.png"];    
+		cannon.x = 50;
+		cannon.y = 250; 
+		cannon.power = 0.1;     		//Current cannon launch power
+		cannon.buildingPower = false;	// Prevents machine gun cannon
+        
+        // Logic for physics steps
+        play_scene.addEventListener("enterframe", function () {
+        	physicsWorld.step(game.fps);
+        	powerLabel.text = (CANNON_TEXT + cannon.power);
+        });
+        
+        // Logic for back_button
+		play_scene.addEventListener('touchstart', function(mousePos){
+			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
 			{
-				if(e.localY > back_button.y && e.localY  < back_button.y + 32)
+				if(mousePos.localY > back_button.y && mousePos.localY  < back_button.y + 32)
 				{
 					game.popScene();
 					game.pushScene(menu_scene);
@@ -60,17 +159,59 @@ window.onload = function(){
 			}
         });
 
+		// Logic for cannon
+        cannon.addEventListener("enterframe", function(){
+        	if(game.input.a && cannon.buildingPower == false) cannon.buildingPower = true;
+        	else if(game.input.a && cannon.buildingPower == true)
+        	{
+				cannon.power += 0.1;
+				if(cannon.power > MAX_CANNON_POWER) cannon.power = MAX_CANNON_POWER;
+        	}
+        	
+        	if(!game.input.a && cannon.buildingPower == true)
+        	{
+        		var drill = new PhyCircleSprite(8, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.2, true);
+       		 	drill.image = game.assets["assets/drillball.png"];
+       			drill.x = (Math.cos(this.rotation * 3.14159/180) * (cannon.width / 2)) + (cannon.x + (cannon.width / 2) - (drill.width / 2));
+       	 		drill.y = (Math.sin(this.rotation * 3.14159/180) * cannon.height) + (cannon.y + ((cannon.height / 2) - (drill.height / 2)));
+        	
+         		drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * cannon.power, Math.sin(cannon.rotation * 3.14159/180) * cannon.power));
+       		    play_scene.addChild(drill);
+  	    	 	drill.addEventListener("enterframe", function(){	
+  	    	 		if (drill.intersect(mapWall)) 
+  	    	 		{
+						/* Do math to figure out where drill is compared to block array
+							
+							mapValues[(drill.x / 16)][(drill.y / 16)] = (-1);
+  	    	 			*/
+  	    	 			
+  	    	 			/* Reloads changed array to map for drawing!
+  	    	 			
+							mapWall.loadData(mapValues);
+						*/
+						
+						/* Evaluate right conditions to remove drill with
+						
+  	    	 				drill.destroy();
+  	    	 			*/
+  	    	 		}
+           	   	});
+           	   		
+           	   	cannon.buildingPower = false;
+           	   	cannon.power = 0.0;
+        	}
+        	
+        	if(game.input.up && this.rotation > -90) this.rotate(-1);					
+			if(game.input.down && this.rotation < 0) this.rotate(1);
+        });
+        
+        // Adds all items to the play_scene
+        play_scene.addChild(back_button);
+        play_scene.addChild(mapFloor);
+        play_scene.addChild(mapWall);
+        play_scene.addChild(cannon);
+        play_scene.addChild(powerLabel);
+        
     };
-=======
-
-    var game = new Core(400, 400);
-    game.fps = 30;
-    game.preload("Background.png", "Cannon.png", "Bullet.png");
-
-}
-
-    game.onload = function(){
->>>>>>> master
-
     game.start();
-}
+};
