@@ -172,14 +172,14 @@ window.onload = function(){
 		
 		// declare white streak plate
 		var white_streak_plate = new Sprite(300,300);
-		white_streak_plate.image = game.assets("assets/WhiteStreakPlate");
+		white_streak_plate.image = game.assets["assets/WhiteStreakPlate.png"];
 		white_streak_plate.x = 90;
 		white_streak_plate.y = 150;
 		streak_scene.addChild(white_streak_plate);
 		
 		// declare black streak plate
 		var black_streak_plate = new Sprite(300,300);
-		black_streak_plate.image = game.assets("assets/BlackStreakPlate");
+		black_streak_plate.image = game.assets["assets/BlackStreakPlate.png"];
 		black_streak_plate.x = 410;
 		black_streak_plate.y = 150;
 		streak_scene.addChild(black_streak_plate);
