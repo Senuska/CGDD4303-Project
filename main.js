@@ -6,8 +6,9 @@ window.onload = function(){
     var physicsWorld = new PhysicsWorld(0, 9.8);
     	var menu_scene = new Scene();
     	var play_scene = new Scene();
+		var streak_scene = new Scene();
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/tileset.png", "assets/drill.png");
+	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/tileset.png", "assets/drill.png", "assets/BlackStreakPlate.png", "assets/WhiteStreakPlate.png");
     game.onload = function(){
 		
 		// ----------------------
@@ -27,6 +28,18 @@ window.onload = function(){
 			game.replaceScene(play_scene);
         });
         
+		// Display values for streak_button
+		streak_button = new Sprite(64, 32);
+		streak_button.image = game.assets["assets/button.png"];
+		streak_button.x = game.width/2 - 96;
+		streak_button.y = game.height/2
+		menu_scene.addChild(streak_button);
+		
+		// Input logic for play_button
+        streak_button.addEventListener('touchstart', function(){
+			game.replaceScene(streak_scene);
+        });
+		
 		// ----------------------
 		// Define the Play Scene
 		// ----------------------
@@ -152,6 +165,28 @@ window.onload = function(){
         play_scene.addChild(cannon);
         play_scene.addChild(floorGroup);
         play_scene.addChild(hudLabel);
+		
+		// ----------------------
+		// Define the Streak Scene
+		// ----------------------
+		
+		// declare white streak plate
+		var white_streak_plate = new Sprite(300,300);
+		white_streak_plate.image = game.assets("assets/WhiteStreakPlate");
+		white_streak_plate.x = 90;
+		white_streak_plate.y = 150;
+		streak_scene.addChild(white_streak_plate);
+		
+		// declare black streak plate
+		var black_streak_plate = new Sprite(300,300);
+		black_streak_plate.image = game.assets("assets/BlackStreakPlate");
+		black_streak_plate.x = 410;
+		black_streak_plate.y = 150;
+		streak_scene.addChild(black_streak_plate);
+		
+		
+		// Adds all items to the streak_scene
+		streak_scene.addChild(back_button);
     };
     game.start();
 };
