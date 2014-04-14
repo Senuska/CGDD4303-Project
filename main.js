@@ -23,15 +23,8 @@ window.onload = function(){
 		menu_scene.addChild(play_button);
 		
 		// Input logic for play_button
-        menu_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > play_button.x && mousePos.localX < play_button.x + 64)
-			{
-				if(mousePos.localY > play_button.y && mousePos.localY  < play_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(play_scene);
-				}
-			}
+        play_button.addEventListener('touchstart', function(){
+			game.replaceScene(play_scene);
         });
         
 		// ----------------------
@@ -73,14 +66,15 @@ window.onload = function(){
 		// Local constant for maximum cannon power
 		const MAX_CANNON_POWER = 3;
 		const CANNON_TEXT = "Cannon Power: ";
+		const AMMO_TEXT = "Drills Remaining: ";
 		play_scene.backgroundColor = "blue";
 		
 		// Binds spacebar to a-button
 		game.keybind(32, 'a');
 		
-		// Label for cannon power
-		var powerLabel = new Label(CANNON_TEXT);
-		powerLabel.x = 200;
+		// Label for 'HUD'
+		var hudLabel = new Label("");
+		hudLabel.x = 200;
 		
 		// Display values for back_button
 		var back_button = new Sprite(32, 32);
@@ -95,23 +89,17 @@ window.onload = function(){
 		cannon.y = 250; 
 		cannon.power = 0.0;     		//Current cannon launch power
 		cannon.buildingPower = false;	// Prevents machine gun cannon
+		cannon.ammo = 3;
         
         // Logic for physics steps
         play_scene.addEventListener("enterframe", function () {
         	physicsWorld.step(game.fps);
-        	powerLabel.text = (CANNON_TEXT + cannon.power.toFixed(1));
+        	hudLabel.text = (CANNON_TEXT + cannon.power.toFixed(1) + "\n" + AMMO_TEXT + cannon.ammo);
         });
         
         // Logic for back_button
-		play_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
-			{
-				if(mousePos.localY > back_button.y && mousePos.localY  < back_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(menu_scene);
-				}
-			}
+		play_scene.addEventListener('touchstart', function(){
+			game.replaceScene(menu_scene);
         });
 
 		// Logic for cannon
@@ -126,26 +114,33 @@ window.onload = function(){
         	if(!game.input.a && cannon.buildingPower == true)
         	{
         		// Bug: Drill spawns correctly rotated, but then snaps back to straight orientation
-        		var drill = new PhyBoxSprite(16, 16, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.3, true);
-       		 	drill.image = game.assets["assets/drill.png"];
-       		 	drill.frame = 0;
-       		 	drill.rotation = cannon.rotation;
-       			drill.x = (Math.cos(this.rotation * 3.14159/180) * (cannon.width / 2)) + (cannon.x + (cannon.width / 2) - (drill.width / 2));
-       	 		drill.y = (Math.sin(this.rotation * 3.14159/180) * cannon.height) + (cannon.y + ((cannon.height / 2) - (drill.height / 2)));
+        		//var drill = new PhyBoxSprite(16, 16, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.3, true);
+        		
+        		if(cannon.ammo > 0)
+        		{
+        			var drill = new PhyCircleSprite(8, enchant.box2d.DYNAMIC_SPRITE, 1.0, 0.5, 0.3, true);
+       		 		drill.image = game.assets["assets/drill.png"];
+       		 		drill.frame = 0;
+       		 		drill.rotation = cannon.rotation;
+       				drill.x = (Math.cos(this.rotation * 3.14159/180) * (cannon.width / 2)) + (cannon.x + (cannon.width / 2) - (drill.width / 2));
+       	 			drill.y = (Math.sin(this.rotation * 3.14159/180) * cannon.height) + (cannon.y + ((cannon.height / 2) - (drill.height / 2)));
         	
-         		drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * cannon.power, Math.sin(cannon.rotation * 3.14159/180) * cannon.power));
-  	    	 	drill.addEventListener("enterframe", function(){
+       		  		drill.applyImpulse(new b2Vec2(Math.cos(cannon.rotation * 3.14159/180) * cannon.power, Math.sin(cannon.rotation * 3.14159/180) * cannon.power));
+  	    		 	drill.addEventListener("enterframe", function(){
   	    	 		
-  	    	 		// To-do: Add conditions to remove drill. ie: Low velocity or cargo met.
-  	    	 		this.frame = this.age % 6;
-  	    	 		drill.contact(function (object) {
-						object.destroy();
-					});
-           	   	});
+  	    	 			// To-do: Add conditions to remove drill. ie: Low velocity or cargo met.
+  	    	 			this.frame = this.age % 6;
+  	    	 			drill.contact(function (object) {
+							object.destroy();
+						});
+           	   		});
            	   		
+           	   		cannon.ammo -= 1;
+           	   		play_scene.addChild(drill);        			
+        		}
+
            	   	cannon.buildingPower = false;
            	   	cannon.power = 0.0;
-           	   	play_scene.addChild(drill);
         	}
         	
         	if(game.input.up && this.rotation > -90) this.rotate(-1);					
@@ -156,7 +151,7 @@ window.onload = function(){
         play_scene.addChild(back_button);
         play_scene.addChild(cannon);
         play_scene.addChild(floorGroup);
-        play_scene.addChild(powerLabel);
+        play_scene.addChild(hudLabel);
     };
     game.start();
 };
