@@ -47,7 +47,7 @@ window.onload = function(){
            Cameron's To-Do List of Stuff To Do:
            [x] Update physics boxes along with images for blocks
            [ ] Level Design (at least one level)
-           	   - Be sure to make block groups (to onload and offload based on stage coordinates to prevent lag)
+           	   [x] Be sure to make block groups (to onload and offload based on stage coordinates to prevent lag)
            [ ] Rotate drill correctly and remove 'snapback bug'
            [ ] Add conditions to remove drill, like low velocity or cargo met.
            [x] Prevent drill movement after it reaches center screen (while shooting, stop movement)
@@ -63,33 +63,76 @@ window.onload = function(){
 		
 		// Creates the groups to hold various objects
 		var stage = new Group();
-		var blockGroupA = new Group();
+		var blockGroup = [];
 		var hud = new Group();
 		
 		// Defines the level with blocks (for STAGE)
 		stage.x = 0;
 		stage.y = 0;
 		stage.STAGE_ORIGIN = 0;
+        
+        // Class that creates a single block chunk (10 x 50)
+    	var BlockChunk = enchant.Class.create(enchant.Group, {
+       	 	initialize: function(x, y, chunkType) {
+       	 		enchant.Group.call(this);
 
-		for(var i = 0; i < 10; i++)
+      	     	if(chunkType == 1)
+      	     	{
+      	     		for(var i = 0; i < 10; i++)
+					{
+						for(var j = 0; j < 50; j++)
+						{
+							if(i == 0) 
+							{
+								var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
+								block.frame = 0;
+							}
+							else if(i <= 9)
+							{
+							 	var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+				 				block.frame = 1;	
+							}	
+
+      	 	 				block.image = game.assets["assets/tileset.png"];
+      	 	 				block.position = {x: ((j*16) + x), y: ((i*16) + y)};
+      						this.addChild(block);				
+						}
+					}      	     		
+      	     	}
+				
+				this.bottom = (16 * 10) + y;
+				this.right = (16 * 50) + x;
+				this.left = x;
+				this.top = y;
+				this.isActive = true;
+				
+				// Removing images prevents lag
+        		this.addEventListener("enterframe", function(){
+        			if(this.right < -stage.x || this.bottom < -stage.y) 
+        			{
+        				stage.removeChild(this);
+        				this.isActive = false;
+       			 	}
+        	
+        			if(this.isActive == false) 
+        			{
+        				stage.addChild(this);
+        				this.isActive = true;
+        			}
+        		});
+        		
+				blockGroup.push(this);
+       	 	}
+    	});
+
+		for(var i = 0; i < 6; i++)
 		{
-			for(var j = 0; j < 50; j++)
-			{
-				if(i == 0) 
-				{
-					var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
-					block.frame = 0;
-				}
-				else
-				{
-				 	var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.25, true);
-				 	block.frame = 1;	
-				}
-
-        		block.image = game.assets["assets/tileset.png"];
-        		block.position = {x: (j*16), y: ((i*16) + 300)};
-      			blockGroupA.addChild(block);				
-			}
+			var blockChunk = new BlockChunk(0, 300 + (i * 160), 1);	
+		} 
+        
+        for(var i = 0; i < 6; i++)
+		{
+			stage.addChild(blockGroup[i]);
 		}
 		
 		// Defines player stat picture and text (for HUD)
@@ -157,9 +200,13 @@ window.onload = function(){
   	    		 	drill.addEventListener("enterframe", function(){
   	    	 		
   	    	 			this.frame = this.age % 6;
+  	    	 			//this.angle = this.age;
   	    	 			this.contact(function (object) {
-  	    	 				if(object.frame == 1) cannon.cargo++;
-							object.destroy();
+  	    	 				if(object.frame != 3)
+  	    	 				{
+  	    	 					cannon.cargo++;
+								object.destroy();
+  	    	 				}
 						});
 						
 						if((game.width / 2 - this.x) <= 0) stage.x = (game.width / 2 - this.x);
@@ -185,8 +232,7 @@ window.onload = function(){
         	if(game.input.up && this.rotation > -90) this.rotate(-1);					
 			if(game.input.down && this.rotation < 0) this.rotate(1);
         });
-        stage.addChild(blockGroupA);
-        
+     
         var cannonStack = new Sprite(114, 103);
         cannonStack.image = game.assets["assets/cannon/stack.png"];
         cannonStack.x = cannon.x - 35;
