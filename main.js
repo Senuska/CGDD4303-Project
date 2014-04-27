@@ -4,10 +4,15 @@ window.onload = function(){
 	// Creates game variable and preloads art assets for every scene
     var game = new Game(800, 600);
     var physicsWorld = new PhysicsWorld(0, 9.8);
-    	var menu_scene = new Scene();
-    	var play_scene = new Scene();
+	// Creates the different scenes used throughout the game
+    var menu_scene = new Scene();
+	var credits_scene = new Scene();
+	var options_scene = new Scene();
+    var play_scene = new Scene();
+	var streak_scene = new Scene();
+	var scratch_scene = new Scene();
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
+	game.preload("assets/chara1.png", "assets/button.png", "assets/play_button_small.png", "assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
     game.onload = function(){
 		
 		// ----------------------
@@ -15,25 +20,58 @@ window.onload = function(){
 		// ----------------------
 		game.pushScene(menu_scene);
 		
+		// Making a test button to see what is causing the issue with the other buttons not working
+		var test_button = new Sprite(64, 32);
+		test_button.image = game.assets["assets/button.png"];
+		test_button.x = 0;
+		test_button.y = 0;
+		//menu_scene.addChild(test_button);
+		test_button.addEventListener('touchstart', function(){
+			test_button.x++;
+		});
+		
+		
 		// Display values for play_button
-		play_button = new Sprite(64, 32);
-		play_button.image = game.assets["assets/button.png"];
-		play_button.x = 800/2 - 32;
-		play_button.y = 600/2
+		var play_button = new Sprite(143, 30);
+		play_button.image = game.assets["assets/play_button_small.png"];
+		play_button.x = game.width/2 - (play_button.width/2);
+		play_button.y = game.height/2;
 		menu_scene.addChild(play_button);
 		
 		// Input logic for play_button
-        menu_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > play_button.x && mousePos.localX < play_button.x + 64)
-			{
-				if(mousePos.localY > play_button.y && mousePos.localY  < play_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(play_scene);
-				}
-			}
+        play_button.addEventListener('touchstart', function(){
+			game.replaceScene(play_scene);
         });
         
+		// Display values for options_button
+		var options_button = new Sprite(237, 30);
+		options_button.image = game.assets["assets/options_button_small.png"];
+		options_button.x = game.width/2 -(options_button.width/2);
+		options_button.y = game.height/2 + 45;
+		menu_scene.addChild(options_button);
+		
+		// Input logic for options_button
+        options_button.addEventListener('touchstart', function(){
+			game.replaceScene(options_scene);
+        });
+		
+		// Display values for back_button
+		var back_button = new Sprite(147, 30);
+		back_button.image = game.assets["assets/back_button_small.png"];
+		back_button.x = 0;
+		back_button.y = game.height - back_button.height;
+		
+		// Input logic for back_button
+		back_button.addEventListener('touchstart', function(mousePos){
+			game.replaceScene(menu_scene);
+        });
+		
+		// -------------------------
+		// Define the Options Scene
+		// -------------------------
+		
+		options_scene.addChild(test_button);
+		options_scene.addChild(back_button);
 		// ----------------------
 		// Define the Play Scene
 		// ----------------------
@@ -92,11 +130,6 @@ window.onload = function(){
 		var powerLabel = new Label(CANNON_TEXT);
 		powerLabel.x = 200;
 		
-		// Display values for back_button
-		var back_button = new Sprite(32, 32);
-		back_button.image = game.assets["assets/button.png"];
-		back_button.x = 0;
-		back_button.y = 0;
 		
       	// Physics objects follow this format: function(staticOrDynamic, density, friction, restitution, awake)
         // var floor = new PhyBoxSprite(400, 100, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.3, true);
@@ -114,17 +147,7 @@ window.onload = function(){
         	powerLabel.text = (CANNON_TEXT + cannon.power);
         });
         
-        // Logic for back_button
-		play_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
-			{
-				if(mousePos.localY > back_button.y && mousePos.localY  < back_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(menu_scene);
-				}
-			}
-        });
+        
 
 		// Logic for cannon
         cannon.addEventListener("enterframe", function(){
