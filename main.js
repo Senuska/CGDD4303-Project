@@ -131,7 +131,17 @@ window.onload = function(){
 		// -------------------------
 		
 		options_scene.addChild(test_button);
-		options_scene.addChild(back_button);
+		
+		var o_back_button = new Sprite(147, 30);
+		o_back_button.image = game.assets["assets/back_button_small.png"];
+		o_back_button.x = 0;
+		o_back_button.y = game.height - o_back_button.height;
+		
+		// Input logic for back_button
+		o_back_button.addEventListener('touchstart', function(mousePos){
+			game.replaceScene(menu_scene);
+        });
+		options_scene.addChild(o_back_button);
 		// ----------------------
 		// Define the Play Scene
 		// ----------------------
@@ -258,6 +268,7 @@ window.onload = function(){
 		p_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
+		hud.addChild(p_back_button);
 		
 		// Defines cannon power bar (for HUD)
         var powerBar = new Bar(50, 325);
