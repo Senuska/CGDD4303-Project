@@ -46,7 +46,7 @@ window.onload = function(){
         /*
            Cameron's To-Do List of Stuff To Do:
            [x] Update physics boxes along with images for blocks
-           [ ] Level Design (at least one level)
+           [x] Level Design (at least one level)
            	   [x] Be sure to make block groups (to onload and offload based on stage coordinates to prevent lag)
            [ ] Rotate drill correctly and remove 'snapback bug'
            [ ] Add conditions to remove drill, like low velocity or cargo met.
@@ -66,49 +66,104 @@ window.onload = function(){
 		var blockGroup = [];
 		var hud = new Group();
 		
+		// Array of rock objects to pass onto hardness/streak tests
+		
+		// Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
+		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		
 		// Defines the level with blocks (for STAGE)
 		stage.x = 0;
 		stage.y = 0;
 		stage.STAGE_ORIGIN = 0;
         
-        // Class that creates a single block chunk (10 x 50)
+        // Class that creates a single block chunks (5 x 25) based on an input type
     	var BlockChunk = enchant.Class.create(enchant.Group, {
        	 	initialize: function(x, y, chunkType) {
        	 		enchant.Group.call(this);
 
-      	     	if(chunkType == 1)
-      	     	{
-      	     		for(var i = 0; i < 10; i++)
+      	     		for(var i = 0; i < 5; i++)
 					{
-						for(var j = 0; j < 50; j++)
-						{
-							if(i == 0) 
-							{
-								var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
-								block.frame = 0;
-							}
-							else if(i <= 9)
-							{
-							 	var block = new PhyBoxSprite(16, 16, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
-				 				block.frame = 1;	
+						for(var j = 0; j < 25; j++)
+						{	
+							if(chunkType == 1)
+							{	
+								if(i == 0) 
+								{
+									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
+									block.frame = 0;
+								}
+								else
+								{
+								 	var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+			 						block.frame = 1;	
+								}									
 							}	
-
-      	 	 				block.image = game.assets["assets/tileset.png"];
-      	 	 				block.position = {x: ((j*16) + x), y: ((i*16) + y)};
-      						this.addChild(block);				
+							else if(chunkType == 2)
+							{
+								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+								
+								if(rand(20) == 1) block.frame = 4;
+								else block.frame = 1;
+							}
+							else if(chunkType == 3)
+							{
+								if(i <= 1) 
+								{
+									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
+									
+									if(rand(30) == 1) block.frame = 5;
+									else block.frame = 1;
+								}
+								else
+								{
+								 	var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+								 	
+								 	if(rand(40) == 1) block.frame = 6;
+								 	else block.frame = 2;	
+								}
+							}
+							else if(chunkType == 4)
+							{
+								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+								
+								if(rand(70) == 1) block.frame = 9;
+								else if(rand(60) == 1) block.frame = 8;
+								else if(rand(50) == 1) block.frame = 7;
+							    block.frame = 2;
+							}
+							else if(chunkType == 5)
+							{
+								if(i < 4) 
+								{
+									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
+									
+									if(rand(100) == 1) block.frame = 12;
+									else if(rand(90) == 1) block.frame = 11;
+									else if(rand(80) == 1) block.frame = 10;
+									else block.frame = 2;
+								}
+								else
+								{
+								 	var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
+			 						block.frame = 3;	
+								}
+							}
+							
+							block.image = game.assets["assets/tileset.png"];
+       	 					block.position = {x: ((j*32) + x), y: ((i*32) + y)};
+      						this.addChild(block);			
 						}
-					}      	     		
-      	     	}
+				}      	     		
 				
-				this.bottom = (16 * 10) + y;
-				this.right = (16 * 50) + x;
+				this.bottom = (32 * 5) + y;
+				this.right = (32 * 25) + x;
 				this.left = x;
 				this.top = y;
 				this.isActive = true;
 				
 				// Removing images prevents lag
         		this.addEventListener("enterframe", function(){
-        			if(this.right < -stage.x || this.bottom < -stage.y) 
+        			if(this.right < -stage.x || this.bottom < -stage.y)
         			{
         				stage.removeChild(this);
         				this.isActive = false;
@@ -116,8 +171,11 @@ window.onload = function(){
         	
         			if(this.isActive == false) 
         			{
-        				stage.addChild(this);
-        				this.isActive = true;
+        				if(this.left < (-stage.x + game.width) || this.top < (-stage.y + game.height))
+        				{
+        					stage.addChild(this);
+        					this.isActive = true;      					
+        				}
         			}
         		});
         		
@@ -125,12 +183,28 @@ window.onload = function(){
        	 	}
     	});
 
-		for(var i = 0; i < 6; i++)
+		/*-------------------------------
+		   Chunk Types:
+			1) Top Soil
+			2) All Dirt
+			3) Dirt/Stone
+			4) All Stone
+			5) Stone with bottom layer
+		  -------------------------------*/
+		
+		var blockChunk;
+		
+		// This nested loop creates super flat level!
+		for(var i = 0; i < 5; i++)
 		{
-			var blockChunk = new BlockChunk(0, 300 + (i * 160), 1);	
-		} 
+			for(var j = 0; j < 2; j++)
+			{
+				blockChunk = new BlockChunk((j * 800), 300 + (i * 160), (i + 1));
+			}	
+		}
         
-        for(var i = 0; i < 6; i++)
+        // Loads all block chunks into the "stage"
+        for(var i = 0; i < 10; i++)
 		{
 			stage.addChild(blockGroup[i]);
 		}
@@ -205,6 +279,7 @@ window.onload = function(){
   	    	 				if(object.frame != 3)
   	    	 				{
   	    	 					cannon.cargo++;
+  	    	 					collectedRocks[object.frame]++;
 								object.destroy();
   	    	 				}
 						});
@@ -224,7 +299,6 @@ window.onload = function(){
 
            	   		stage.addChild(drill);        			
         		}
-        		
         		cannon.power = 0.0;
            	   	cannon.buildingPower = false;
         	}
@@ -271,6 +345,14 @@ window.onload = function(){
         play_scene.addEventListener("enterframe", function () {
         	physicsWorld.step(game.fps);
         	hudLabel.text = (cannon.cargo + " / 100");
+        	
+        	// Add final score details and rocks collected here
+        	if(cannon.ammo == 0) 
+        	{
+        		stage.removeChild(cannon);
+        		stage.removeChild(cannonSmoke);
+        		stage.removeChild(cannonStack);
+        	}
         });
         
         // Adds groups to play_scene
@@ -279,3 +361,7 @@ window.onload = function(){
     };
     game.start();
 };
+
+function rand(num){
+    return Math.floor(Math.random() * num);
+}
