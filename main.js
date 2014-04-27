@@ -11,6 +11,12 @@ window.onload = function(){
     var play_scene = new Scene();
 	var streak_scene = new Scene();
 	var scratch_scene = new Scene();
+	var credits01 = new Label("Credits:");
+	var credits02 = new Label("Cameron Herbert");
+	var credits03 = new Label("Samuel Erik Swanson");
+	var credits04 = new Label("Chad Rush");
+	var credits04 = new Label("Special Thanks:");
+	var credits05 = new Label("Mrs. Stormi Johnson's 3rd Grade Class");
     game.fps = 30;
 	game.preload("assets/chara1.png", "assets/button.png", "assets/play_button_small.png", "assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
     game.onload = function(){
@@ -55,6 +61,18 @@ window.onload = function(){
 			game.replaceScene(options_scene);
         });
 		
+		// Display values for credits_button
+		var credits_button = new Sprite(237, 30);
+		credits_button.image = game.assets["assets/credits_button_small.png"];
+		credits_button.x = game.width/2 -(credits_button.width/2);
+		credits_button.y = game.height/2 + 90;
+		menu_scene.addChild(credits_button);
+		
+		// Input logic for credits_button
+        credits_button.addEventListener('touchstart', function(){
+			game.replaceScene(credits_scene);
+        });
+		
 		// Display values for back_button
 		var back_button = new Sprite(147, 30);
 		back_button.image = game.assets["assets/back_button_small.png"];
@@ -65,6 +83,43 @@ window.onload = function(){
 		back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
+		
+		// -------------------------
+		// Define the Credits Scene
+		// -------------------------
+		credits01.x = game.width/2 - credits01.width/2;
+		credits01.y = 50;
+		
+		credits02.x = game.width/2 - credits02.width/2;
+		credits02.y = credits01.y + credits01.height + 15;
+		
+		credits03.x = game.width/2 - credits03.width/2;
+		credits03.y = credits02.y + credits02.height + 15;
+		
+		credits04.x = game.width/2 - credits04.width/2;
+		credits04.y = credits03.y + credits03.height + 15;
+		
+		credits05.x = game.width/2 - credits05.width/2;
+		credits05.y = credits04.y + credits04.height + 15;
+		
+		// Display values for back_button
+		var cback_button = new Sprite(147, 30);
+		cback_button.image = game.assets["assets/back_button_small.png"];
+		cback_button.x = 0;
+		cback_button.y = game.height - back_button.height;
+		
+		// Input logic for back_button
+		cback_button.addEventListener('touchstart', function(mousePos){
+			game.replaceScene(menu_scene);
+        });
+		
+		
+		credits_scene.addChild(credits01);
+		credits_scene.addChild(credits02);
+		credits_scene.addChild(credits03);
+		credits_scene.addChild(credits04);
+		credits_scene.addChild(credits05);
+		credits_scene.addChild(cback_button);
 		
 		// -------------------------
 		// Define the Options Scene
