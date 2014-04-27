@@ -18,9 +18,9 @@ window.onload = function(){
 	var credits04 = new Label("Special Thanks:");
 	var credits05 = new Label("Mrs. Stormi Johnson's 3rd Grade Class");
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/play_button_small.png", "assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", 
+	game.preload("assets/chara1.png", "assets/button.png", "assets/play_button_small.png", "assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/tileset.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", 
 				 "assets/bar.png", "assets/HUD.png", "assets/cannon/stack.png", "assets/cannon/smoke.png");
+	
 	
 	// Binds spacebar to a-button
 	game.keybind(32, 'a');
@@ -108,13 +108,13 @@ window.onload = function(){
 		credits05.y = credits04.y + credits04.height + 15;
 		
 		// Display values for back_button
-		var cback_button = new Sprite(147, 30);
-		cback_button.image = game.assets["assets/back_button_small.png"];
-		cback_button.x = 0;
-		cback_button.y = game.height - back_button.height;
+		var c_back_button = new Sprite(147, 30);
+		c_back_button.image = game.assets["assets/back_button_small.png"];
+		c_back_button.x = 0;
+		c_back_button.y = game.height - c_back_button.height;
 		
 		// Input logic for back_button
-		cback_button.addEventListener('touchstart', function(mousePos){
+		c_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
 		
@@ -124,7 +124,7 @@ window.onload = function(){
 		credits_scene.addChild(credits03);
 		credits_scene.addChild(credits04);
 		credits_scene.addChild(credits05);
-		credits_scene.addChild(cback_button);
+		credits_scene.addChild(c_back_button);
 		
 		// -------------------------
 		// Define the Options Scene
@@ -248,15 +248,16 @@ window.onload = function(){
 		hud.addChild(hudPic);
 		hud.addChild(hudLabel);
 		
-		// Defines back button (for HUD)
-		var back_button = new Sprite(32, 32);
-		back_button.image = game.assets["assets/button.png"];
-		back_button.x = 0;
-		back_button.y = 0;
-		back_button.addEventListener('touchstart', function(){
+		// Display values for back_button
+		var p_back_button = new Sprite(147, 30);
+		p_back_button.image = game.assets["assets/back_button_small.png"];
+		p_back_button.x = 0;
+		p_back_button.y = game.height - p_back_button.height;
+		
+		// Input logic for back_button
+		p_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
-		hud.addChild(back_button);
 		
 		// Defines cannon power bar (for HUD)
         var powerBar = new Bar(50, 325);
