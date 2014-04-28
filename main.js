@@ -4,10 +4,16 @@ window.onload = function(){
 	// Creates game variable and preloads art assets for every scene
     var game = new Game(800, 600);
     var physicsWorld = new PhysicsWorld(0, 9.8);
-    	var menu_scene = new Scene();
-    	var play_scene = new Scene();
+    var menu_scene = new Scene();
+    var play_scene = new Scene();
+	var scratch_scene = new Scene();
+	var credits_scene = new Scene();
+	var play_button;
+	var scratch_button;
+	var back_button;
+	var credits_button;
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png");
+	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png", "assets/rock01.png", "assets/rock02.png", "assets/rock03.png", "assets/rock04.png", "assets/rock05.png", "assets/rock06.png", "assets/rock07.png");
     game.onload = function(){
 		
 		// ----------------------
@@ -18,22 +24,65 @@ window.onload = function(){
 		// Display values for play_button
 		play_button = new Sprite(64, 32);
 		play_button.image = game.assets["assets/button.png"];
-		play_button.x = 800/2 - 32;
-		play_button.y = 600/2
-		menu_scene.addChild(play_button);
+		play_button.x = game.width/2 - play_button.width;
+		play_button.y = game.height/2;
 		
 		// Input logic for play_button
-        menu_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > play_button.x && mousePos.localX < play_button.x + 64)
-			{
-				if(mousePos.localY > play_button.y && mousePos.localY  < play_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(play_scene);
-				}
-			}
+        play_button.addEventListener('touchstart', function(mousePos){
+			game.replaceScene(play_scene);
         });
-        
+		
+		menu_scene.addChild(play_button);
+		
+		scratch_button = new Sprite(64, 32);
+		scratch_button.image = game.assets["assets/button.png"];
+		scratch_button.x = game.width/2 - scratch_button.width;
+		scratch_button.y = game.height - scratch_button.height;
+		
+		scratch_button.addEventListener('touchstart', function(){
+			game.replaceScene(scratch_scene);
+		});
+		
+		menu_scene.addChild(scratch_button);
+		
+		// -------------------------
+		// Define the Scratch Scene
+		// -------------------------
+		var rock01 = new Sprite(50, 50);
+		rock01.image = game.assets["assets/rock01.png"];
+		rock01.x = 0;
+		rock01.y = 0;
+		scratch_scene.addChild(rock01);
+		var rock02 = new Sprite(50, 50);
+		rock02.image = game.assets["assets/rock02.png"];
+		rock02.x = 0;
+		rock02.y = rock01.height + rock01.y;
+		scratch_scene.addChild(rock02);
+		var rock03 = new Sprite(50, 50);
+		rock03.image = game.assets["assets/rock03.png"];
+		rock03.x = 0;
+		rock03.y = rock02.height + rock02.y;
+		scratch_scene.addChild(rock03);
+		var rock04 = new Sprite(50, 50);
+		rock04.image = game.assets["assets/rock04.png"];
+		rock04.x = 0;
+		rock04.y = rock03.height + rock03.y;
+		scratch_scene.addChild(rock04);
+		var rock05 = new Sprite(50, 50);
+		rock05.image = game.assets["assets/rock05.png"];
+		rock05.x = 0;
+		rock05.y = rock04.height + rock04.y;
+		scratch_scene.addChild(rock05);
+		var rock06 = new Sprite(50, 50);
+		rock06.image = game.assets["assets/rock06.png"];
+		rock06.x = 0;
+		rock06.y = rock05.height + rock05.y;
+		scratch_scene.addChild(rock06);
+		var rock07 = new Sprite(50, 50);
+		rock07.image = game.assets["assets/rock07.png"];
+		rock07.x = 0;
+		rock07.y = rock06.height + rock06.y;
+		scratch_scene.addChild(rock07);
 		// ----------------------
 		// Define the Play Scene
 		// ----------------------
@@ -93,7 +142,7 @@ window.onload = function(){
 		powerLabel.x = 200;
 		
 		// Display values for back_button
-		var back_button = new Sprite(32, 32);
+		back_button = new Sprite(32, 32);
 		back_button.image = game.assets["assets/button.png"];
 		back_button.x = 0;
 		back_button.y = 0;
@@ -115,15 +164,8 @@ window.onload = function(){
         });
         
         // Logic for back_button
-		play_scene.addEventListener('touchstart', function(mousePos){
-			if(mousePos.localX > back_button.x && mousePos.localX < back_button.x + 32)
-			{
-				if(mousePos.localY > back_button.y && mousePos.localY  < back_button.y + 32)
-				{
-					game.popScene();
-					game.pushScene(menu_scene);
-				}
-			}
+		back_button.addEventListener('touchstart', function(){
+			game.replaceScene(menu_scene);
         });
 
 		// Logic for cannon
