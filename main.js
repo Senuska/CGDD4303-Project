@@ -285,7 +285,7 @@ window.onload = function(){
 		cannon.buildingPower = false;
 		cannon.canFire = true;
 		cannon.gameOver = false;
-		cannon.ammo = 1;
+		cannon.ammo = 4;
 		cannon.cargo = 0;
 
         cannon.addEventListener("enterframe", function(){
