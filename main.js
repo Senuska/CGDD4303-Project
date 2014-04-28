@@ -224,6 +224,7 @@ window.onload = function(){
 		// Defines back button (for HUD)
 		var back_button = new Sprite(32, 32);
 		back_button.image = game.assets["assets/button.png"];
+		back_button.frame = 2;
 		back_button.x = 0;
 		back_button.y = 0;
 		back_button.addEventListener('touchstart', function(){
