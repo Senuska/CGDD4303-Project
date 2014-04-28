@@ -6,19 +6,22 @@ window.onload = function(){
     var physicsWorld = new PhysicsWorld(0, 9.8);
     	var menu_scene = new Scene();
     	var play_scene = new Scene();
+    	var how_to_play_scene = new Scene();
     game.fps = 30;
 	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", 
-				 "assets/bar.png", "assets/HUD.png", "assets/cannon/stack.png", "assets/cannon/smoke.png");
+				 "assets/bar.png", "assets/HUD.png", "assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/scoreHUD.png",
+				 "assets/htp/drillOne.png", "assets/htp/drillTwo.png", "assets/htp/drillThree.png");
 	
 	// Binds spacebar to a-button
 	game.keybind(32, 'a');
     game.onload = function(){
 		
+		//game.pushScene(menu_scene);
+		game.pushScene(how_to_play_scene);
 		// ----------------------
 		// Define the Menu Scene
 		// ----------------------
-		game.pushScene(menu_scene);
-		
+
 		// Display values for play_button
 		play_button = new Sprite(64, 32);
 		play_button.image = game.assets["assets/button.png"];
@@ -31,6 +34,30 @@ window.onload = function(){
 			game.replaceScene(play_scene);
         });
         
+        // -------------------------
+		// Define How To Play Scene
+		// -------------------------
+		var instructions = new Sprite(609, 457);
+		instructions.x = 0;
+		instructions.y = 0;
+		instructions.index = 1;
+		instructions.isDown = false;
+		instructions.addEventListener("enterframe", function(){
+			if(game.input.a && !this.isDown) 
+			{
+				this.index++;
+				this.isDown = true;	
+			}
+			else if(!game.input.a) this.isDown = false;
+			
+			if(this.index == 1) this.image = game.assets["assets/htp/drillOne.png"];
+			else if(this.index == 2 ) this.image = game.assets["assets/htp/drillTwo.png"];
+			else if(this.index == 3) this.image = game.assets["assets/htp/drillThree.png"];
+			else game.replaceScene(menu_scene);
+		});
+		
+		how_to_play_scene.addChild(instructions);
+
 		// ----------------------
 		// Define the Play Scene
 		// ----------------------
@@ -220,6 +247,13 @@ window.onload = function(){
 		hudLabel.y = 27;
 		hud.addChild(hudPic);
 		hud.addChild(hudLabel);
+		var hudScore = new Sprite(400, 400);
+		hudScore.image = game.assets["assets/scoreHUD.png"];
+		hudScore.x = 100;
+		hudScore.y = 100;
+		hudScore.addEventListener("enterframe", function(){
+			if(game.input.a) game.replaceScene(menu_scene);
+		});
 		
 		// Defines back button (for HUD)
 		var back_button = new Sprite(32, 32);
@@ -250,7 +284,8 @@ window.onload = function(){
 		cannon.power = 0.0;
 		cannon.buildingPower = false;
 		cannon.canFire = true;
-		cannon.ammo = 3;
+		cannon.gameOver = false;
+		cannon.ammo = 1;
 		cannon.cargo = 0;
 
         cannon.addEventListener("enterframe", function(){
@@ -292,7 +327,8 @@ window.onload = function(){
 						if(cannon.cargo >= 1000 || this.age >= 200) 
 						{
 							this.destroy();
-							cannon.canFire = true;
+							if(cannon.ammo != 0) cannon.canFire = true;
+							else cannon.gameOver = true;
 							stage.x = stage.STAGE_ORIGIN;
 							stage.y = stage.STAGE_ORIGIN;
 						}
@@ -326,7 +362,7 @@ window.onload = function(){
         stage.addChild(cannonStack);
                 
         // Defines drill sprites (for HUD)
-		for(var i = 0; i < 3; i++)
+		for(var i = 0; i < cannon.ammo; i++)
 		{
 			var drillLife = new Sprite(16, 16);
 			drillLife.image = game.assets["assets/cannon/drill.png"];
@@ -348,11 +384,35 @@ window.onload = function(){
         	hudLabel.text = (cannon.cargo + " / 100");
         	
         	// Add final score details and rocks collected here
-        	if(cannon.ammo == 0) 
+        	if(cannon.gameOver) 
         	{
         		stage.removeChild(cannon);
         		stage.removeChild(cannonSmoke);
         		stage.removeChild(cannonStack);
+        		stage.addChild(hudScore);
+        		hudLabel.x = hudScore.x + 100;
+        		hudLabel.y = hudScore.y + 71;
+        		
+        		var totalScore = 0;
+        		
+        		for(var i = 0; i < 11; i++)
+        		{
+        			totalScore += (collectedRocks[i] * ((i + 1) * 5));
+        		}
+        		
+        		hudLabel.text = ("x  " + collectedRocks[0] + " = " + collectedRocks[0] * 5 + "<br/>" +
+        						 "x  " + collectedRocks[1] + " = " + collectedRocks[1] * 10 + "<br/>" +
+        						 "x  " + collectedRocks[2] + " = " + collectedRocks[2] * 15 + "<br/>" +
+        						 "x  " + collectedRocks[3] + " = " + collectedRocks[3] * 20 + "<br/>" +
+        						 "x  " + collectedRocks[4] + " = " + collectedRocks[4] * 25 + "<br/>" +
+        						 "x  " + collectedRocks[5] + " = " + collectedRocks[5] * 30 + "<br/>" +
+        						 "x  " + collectedRocks[6] + " = " + collectedRocks[6] * 35 + "<br/>" +
+        						 "x  " + collectedRocks[7] + " = " + collectedRocks[7] * 40 + "<br/>" +
+        						 "x  " + collectedRocks[8] + " = " + collectedRocks[8] * 45 + "<br/>" +
+        						 "x  " + collectedRocks[9] + " = " + collectedRocks[9] * 50 + "<br/>" +
+        						 "x  " + collectedRocks[10] + " = " + collectedRocks[10] * 55 + "<br/>" +
+        						 "x  " + collectedRocks[11] + " = " + collectedRocks[11] * 60 + "<br/>" +
+        						 totalScore);
         	}
         });
         
