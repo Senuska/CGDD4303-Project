@@ -6,20 +6,28 @@ window.onload = function(){
     var physicsWorld = new PhysicsWorld(0, 9.8);
 	// Creates the different scenes used throughout the game
     var menu_scene = new Scene();
-	var credits_scene = new Scene();
-	var options_scene = new Scene();
     var play_scene = new Scene();
 	var scratch_scene = new Scene();
-    	var how_to_play_scene = new Scene();
+    var how_to_play_scene = new Scene();
 	var credits_scene = new Scene();
+	var options_scene = new Scene();
+	// Credits (labels are placeholders)
+	var credits01 = new Label("Credits:");
+	var credits02 = new Label("Cameron Herbert");
+	var credits03 = new Label("Samuel Erik Swanson");
+	var credits04 = new Label("Chad Rush");
+	var credits04 = new Label("Special Thanks:");
+	var credits05 = new Label("Mrs. Stormi Johnson's 3rd Grade Class");
+	// Default button variables
 	var play_button;
 	var scratch_button;
 	var back_button;
 	var credits_button;
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/play_button_small.png", "assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/tileset.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", 
-				 "assets/bar.png", "assets/HUD.png", "assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/scoreHUD.png",
-				 "assets/htp/drillOne.png", "assets/htp/drillTwo.png", "assets/htp/drillThree.png");
+	game.preload("assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", "assets/bar.png", "assets/HUD.png", 
+				"assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/htp/drillOne.png", "assets/scoreHUD.png", "assets/play_button_small.png", 
+				"assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/htp/drillTwo.png", 
+				"assets/htp/drillThree.png");
 	
 	
 	// Binds spacebar to a-button
@@ -31,22 +39,72 @@ window.onload = function(){
 		// ----------------------
 		// Define the Menu Scene
 		// ----------------------
-
-		game.pushScene(menu_scene);
 		
 		// Display values for play_button
-		play_button = new Sprite(64, 32);
-		play_button.image = game.assets["assets/button.png"];
 		var play_button = new Sprite(143, 30);
 		play_button.image = game.assets["assets/play_button_small.png"];
 		play_button.x = game.width/2 - (play_button.width/2);
 		play_button.y = game.height/2;
+		menu_scene.addChild(play_button);
 		
 		// Input logic for play_button
         play_button.addEventListener('touchstart', function(){
 			game.replaceScene(play_scene);
         });
+		
+		// Display values for scratch_button
+		scratch_button = new Sprite(64, 32);
+		scratch_button.image = game.assets["assets/button.png"];
+		scratch_button.x = game.width/2 - scratch_button.width;
+		scratch_button.y = game.height - scratch_button.height;
+		menu_scene.addChild(scratch_button);
+		
+		// Input logic for scratch_button
+		scratch_button.addEventListener('touchstart', function(){
+			game.replaceScene(scratch_scene);
+		});
         
+		// Display values for options_button
+		var options_button = new Sprite(237, 30);
+		options_button.image = game.assets["assets/options_button_small.png"];
+		options_button.x = game.width/2 -(options_button.width/2);
+		options_button.y = game.height/2 + 45;
+		menu_scene.addChild(options_button);
+		
+		// Input logic for options_button
+        options_button.addEventListener('touchstart', function(){
+			game.replaceScene(options_scene);
+        });
+		
+		// Display values for credits_button
+		var credits_button = new Sprite(237, 30);
+		credits_button.image = game.assets["assets/credits_button_small.png"];
+		credits_button.x = game.width/2 -(credits_button.width/2);
+		credits_button.y = game.height/2 + 90;
+		menu_scene.addChild(credits_button);
+		
+		// Input logic for credits_button
+        credits_button.addEventListener('touchstart', function(){
+			game.replaceScene(credits_scene);
+        });
+		
+		// -------------------------
+		// Define Scratch Scene
+		// -------------------------
+
+		
+		// Display values for back_button
+		var sc_back_button = new Sprite(147, 30);
+		sc_back_button.image = game.assets["assets/back_button_small.png"];
+		sc_back_button.x = 0;
+		sc_back_button.y = game.height - sc_back_button.height;
+		scratch_scene.addChild(sc_back_button);
+		
+		// Input logic for back_button
+		sc_back_button.addEventListener('touchstart', function(){
+			game.replaceScene(menu_scene);
+        });
+		
         // -------------------------
 		// Define How To Play Scene
 		// -------------------------
@@ -57,74 +115,36 @@ window.onload = function(){
 		instructions.isDown = false;
 		instructions.addEventListener("enterframe", function(){
 		
-		menu_scene.addChild(play_button);
-		
-		scratch_button = new Sprite(64, 32);
-		scratch_button.image = game.assets["assets/button.png"];
-		scratch_button.x = game.width/2 - scratch_button.width;
-		scratch_button.y = game.height - scratch_button.height;
-		
-		scratch_button.addEventListener('touchstart', function(){
-			game.replaceScene(scratch_scene);
 			if(game.input.a && !this.isDown) 
 			{
 				this.index++;
 				this.isDown = true;	
 			}
 			else if(!game.input.a) this.isDown = false;
-			
+		
 			if(this.index == 1) this.image = game.assets["assets/htp/drillOne.png"];
 			else if(this.index == 2 ) this.image = game.assets["assets/htp/drillTwo.png"];
 			else if(this.index == 3) this.image = game.assets["assets/htp/drillThree.png"];
 			else game.replaceScene(menu_scene);
 		});
 		
-		menu_scene.addChild(scratch_button);
+		
 		
 		how_to_play_scene.addChild(instructions);
+		
+		game.pushScene(how_to_play_scene);
 
 		// -------------------------
 		// Define the Scratch Scene
 		// -------------------------
-		var rock01 = new Sprite(50, 50);
-		rock01.image = game.assets["assets/rock01.png"];
-		rock01.x = 0;
-		rock01.y = 0;
-		scratch_scene.addChild(rock01);
-		var rock02 = new Sprite(50, 50);
-		rock02.image = game.assets["assets/rock02.png"];
-		rock02.x = 0;
-		rock02.y = rock01.height + rock01.y;
-		scratch_scene.addChild(rock02);
-		var rock03 = new Sprite(50, 50);
-		rock03.image = game.assets["assets/rock03.png"];
-		rock03.x = 0;
-		rock03.y = rock02.height + rock02.y;
-		scratch_scene.addChild(rock03);
-		var rock04 = new Sprite(50, 50);
-		rock04.image = game.assets["assets/rock04.png"];
-		rock04.x = 0;
-		rock04.y = rock03.height + rock03.y;
-		scratch_scene.addChild(rock04);
-		var rock05 = new Sprite(50, 50);
-		rock05.image = game.assets["assets/rock05.png"];
-		rock05.x = 0;
-		rock05.y = rock04.height + rock04.y;
-		scratch_scene.addChild(rock05);
-		var rock06 = new Sprite(50, 50);
-		rock06.image = game.assets["assets/rock06.png"];
-		rock06.x = 0;
-		rock06.y = rock05.height + rock05.y;
-		scratch_scene.addChild(rock06);
-		var rock07 = new Sprite(50, 50);
-		rock07.image = game.assets["assets/rock07.png"];
-		rock07.x = 0;
-		rock07.y = rock06.height + rock06.y;
-		scratch_scene.addChild(rock07);
+		
+		
+		
+		// -------------------------
+		// Define the Options Scene
 		// -------------------------
 		
-		options_scene.addChild(test_button);
-		
+		// Display values for o_back_button
 		var o_back_button = new Sprite(147, 30);
 		o_back_button.image = game.assets["assets/back_button_small.png"];
 		o_back_button.x = 0;
@@ -134,8 +154,10 @@ window.onload = function(){
 		o_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
+		
 		options_scene.addChild(o_back_button);
-		// ----------------------
+		
+	// ----------------------
 		// Define the Play Scene
 		// ----------------------
 
@@ -284,8 +306,6 @@ window.onload = function(){
         		});
         		
 				blockGroup.push(this);
-		back_button.addEventListener('touchstart', function(){
-			game.replaceScene(menu_scene);
        	 	}
     	});
 
@@ -331,22 +351,20 @@ window.onload = function(){
 		hudScore.x = 100;
 		hudScore.y = 100;
 		hudScore.addEventListener("enterframe", function(){
-			if(game.input.a) game.replaceScene(menu_scene);
+			if(game.input.a) game.replaceScene(scratch_scene);
 		});
-		
+
 		// Display values for back_button
 		var p_back_button = new Sprite(147, 30);
 		p_back_button.image = game.assets["assets/back_button_small.png"];
-		// Defines back button (for HUD)
-		var back_button = new Sprite(32, 32);
-		back_button.image = game.assets["assets/button.png"];
-		back_button.frame = 2;
-		back_button.x = 0;
-		back_button.y = 0;
-		back_button.addEventListener('touchstart', function(){
+		p_back_button.x = 0;
+		p_back_button.y = game.height - p_back_button.height;
+		
+		// Input logic for back_button
+		p_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
-		hud.addChild(back_button);
+		hud.addChild(p_back_button);
 		
 		// Defines cannon power bar (for HUD)
         var powerBar = new Bar(50, 325);
@@ -367,7 +385,7 @@ window.onload = function(){
 		cannon.buildingPower = false;
 		cannon.canFire = true;
 		cannon.gameOver = false;
-		cannon.ammo = 1;
+		cannon.ammo = 4;
 		cannon.cargo = 0;
 
         cannon.addEventListener("enterframe", function(){
