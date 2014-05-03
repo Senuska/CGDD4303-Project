@@ -18,6 +18,11 @@ window.onload = function(){
 	var credits04 = new Label("Chad Rush");
 	var credits04 = new Label("Special Thanks:");
 	var credits05 = new Label("Mrs. Stormi Johnson's 3rd Grade Class");
+	/* 
+	   Array of rock objects to pass onto hardness/streak tests	
+	   Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
+	*/ 
+	var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 	// Default button variables
 	var play_button;
 	var scratch_button;
@@ -192,10 +197,7 @@ window.onload = function(){
 		var blockGroup = [];
 		var hud = new Group();
 		
-		// Array of rock objects to pass onto hardness/streak tests
 		
-		// Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
-		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		
 		// Defines the level with blocks (for STAGE)
 		stage.x = 0;
