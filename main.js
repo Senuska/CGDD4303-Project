@@ -95,8 +95,8 @@ window.onload = function(){
 		
 		// Array of rock objects to pass onto hardness/streak tests
 		
-		// Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
-		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+		// Topsoil, Soil, Stone, Talc, Kammerite, Gold, Mica, Copper, Pearl, Aragonite, Nickel, Fluorite, Granite, Obsidian, Quartz, Iron, Garnet, Diamond
+		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
 		
 		// Defines the level with blocks (for STAGE)
 		stage.x = 0;
@@ -129,7 +129,8 @@ window.onload = function(){
 							{
 								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								
-								if(rand(20) == 1) block.frame = 4;
+								if(rand(20) == 1) block.frame = 5;			// gold
+								else if(rand(20) == 1) block.frame = 4;		// kammerite
 								else block.frame = 1;
 							}
 							else if(chunkType == 3)
@@ -138,14 +139,17 @@ window.onload = function(){
 								{
 									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
 									
-									if(rand(30) == 1) block.frame = 5;
+									if(rand(25) == 1) block.frame = 8;			// pearl
+									else if(rand(20) == 1) block.frame = 7;		// copper
+									else if(rand(20) == 1) block.frame = 6;		// mica
 									else block.frame = 1;
 								}
 								else
 								{
 								 	var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								 	
-								 	if(rand(40) == 1) block.frame = 6;
+								 	if(rand(40) == 1) block.frame = 10;			// nickel
+								 	else if(rand(30) == 1) block.frame = 9;		// aragonite
 								 	else block.frame = 2;	
 								}
 							}
@@ -153,10 +157,10 @@ window.onload = function(){
 							{
 								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								
-								if(rand(70) == 1) block.frame = 9;
-								else if(rand(60) == 1) block.frame = 8;
-								else if(rand(50) == 1) block.frame = 7;
-							    block.frame = 2;
+								if(rand(70) == 1) block.frame = 14;			// obsidian
+								else if(rand(60) == 1) block.frame = 13;	// granite
+								else if(rand(50) == 1) block.frame = 12;	// fluorite
+								else block.frame = 2;
 							}
 							else if(chunkType == 5)
 							{
@@ -164,9 +168,10 @@ window.onload = function(){
 								{
 									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
 									
-									if(rand(100) == 1) block.frame = 12;
-									else if(rand(90) == 1) block.frame = 11;
-									else if(rand(80) == 1) block.frame = 10;
+									if(rand(100) == 1) block.frame = 18; 		// diamond
+									else if(rand(90) == 1) block.frame = 17;	// garnet
+									else if(rand(90) == 1) block.frame = 16;	// iron
+									else if(rand(80) == 1) block.frame = 15;	// quartz
 									else block.frame = 2;
 								}
 								else
@@ -391,11 +396,11 @@ window.onload = function(){
         		stage.removeChild(cannonStack);
         		stage.addChild(hudScore);
         		hudLabel.x = hudScore.x + 100;
-        		hudLabel.y = hudScore.y + 71;
+        		hudLabel.y = hudScore.y + 66;
         		
         		var totalScore = 0;
         		
-        		for(var i = 0; i < 11; i++)
+        		for(var i = 0; i < 17; i++)
         		{
         			totalScore += (collectedRocks[i] * ((i + 1) * 5));
         		}
@@ -412,6 +417,12 @@ window.onload = function(){
         						 "x  " + collectedRocks[9] + " = " + collectedRocks[9] * 50 + "<br/>" +
         						 "x  " + collectedRocks[10] + " = " + collectedRocks[10] * 55 + "<br/>" +
         						 "x  " + collectedRocks[11] + " = " + collectedRocks[11] * 60 + "<br/>" +
+        					     "x  " + collectedRocks[12] + " = " + collectedRocks[11] * 65 + "<br/>" +
+        						 "x  " + collectedRocks[13] + " = " + collectedRocks[11] * 70 + "<br/>" +
+        						 "x  " + collectedRocks[14] + " = " + collectedRocks[11] * 75 + "<br/>" +
+        						 "x  " + collectedRocks[15] + " = " + collectedRocks[11] * 80 + "<br/>" +
+        						 "x  " + collectedRocks[16] + " = " + collectedRocks[11] * 85 + "<br/>" +
+        						 "x  " + collectedRocks[17] + " = " + collectedRocks[11] * 90 + "<br/>" +
         						 totalScore);
         	}
         });
