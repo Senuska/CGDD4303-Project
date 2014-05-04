@@ -29,7 +29,7 @@ window.onload = function(){
 	var back_button;
 	var credits_button;
     game.fps = 30;
-	game.preload("assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", "assets/bar.png", "assets/HUD.png", 
+	game.preload("assets/button.png", "assets/cannon/Cannon.png", "assets/tileset.png", "assets/cannon/drill.png", "assets/bar.png", "assets/HUD.png", 
 				"assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/htp/drillOne.png", "assets/scoreHUD.png", "assets/play_button_small.png", 
 				"assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/htp/drillTwo.png", 
 				"assets/htp/drillThree.png");

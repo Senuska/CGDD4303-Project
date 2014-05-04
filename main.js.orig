@@ -4,29 +4,39 @@ window.onload = function(){
 	// Creates game variable and preloads art assets for every scene
     var game = new Game(800, 600);
     var physicsWorld = new PhysicsWorld(0, 9.8);
-<<<<<<< HEAD
+	// Creates the different scenes used throughout the game
     var menu_scene = new Scene();
     var play_scene = new Scene();
 	var scratch_scene = new Scene();
+    var how_to_play_scene = new Scene();
 	var credits_scene = new Scene();
+	var options_scene = new Scene();
+	// Credits (labels are placeholders)
+	var credits01 = new Label("Credits:");
+	var credits02 = new Label("Cameron Herbert");
+	var credits03 = new Label("Samuel Erik Swanson");
+	var credits04 = new Label("Chad Rush");
+	var credits04 = new Label("Special Thanks:");
+	var credits05 = new Label("Mrs. Stormi Johnson's 3rd Grade Class");
+	/* 
+	   Array of rock objects to pass onto hardness/streak tests	
+	   Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
+	*/ 
+	var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+	// Default button variables
 	var play_button;
 	var scratch_button;
 	var back_button;
 	var credits_button;
     game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon.png", "assets/drillball.png", "assets/tileset.png", "assets/rock01.png", "assets/rock02.png", "assets/rock03.png", "assets/rock04.png", "assets/rock05.png", "assets/rock06.png", "assets/rock07.png");
-=======
-    	var menu_scene = new Scene();
-    	var play_scene = new Scene();
-    	var how_to_play_scene = new Scene();
-    game.fps = 30;
-	game.preload("assets/chara1.png", "assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", 
-				 "assets/bar.png", "assets/HUD.png", "assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/scoreHUD.png",
-				 "assets/htp/drillOne.png", "assets/htp/drillTwo.png", "assets/htp/drillThree.png");
+	game.preload("assets/button.png", "assets/cannon/cannon.png", "assets/tileset.png", "assets/cannon/drill.png", "assets/bar.png", "assets/HUD.png", 
+				"assets/cannon/stack.png", "assets/cannon/smoke.png", "assets/htp/drillOne.png", "assets/scoreHUD.png", "assets/play_button_small.png", 
+				"assets/back_button_small.png", "assets/credits_button_small.png", "assets/options_button_small.png", "assets/htp/drillTwo.png", 
+				"assets/htp/drillThree.png");
+	
 	
 	// Binds spacebar to a-button
 	game.keybind(32, 'a');
->>>>>>> origin/Cameron's-Branch
     game.onload = function(){
 		
 		//game.pushScene(menu_scene);
@@ -34,80 +44,72 @@ window.onload = function(){
 		// ----------------------
 		// Define the Menu Scene
 		// ----------------------
-
+		
 		// Display values for play_button
-		play_button = new Sprite(64, 32);
-		play_button.image = game.assets["assets/button.png"];
-<<<<<<< HEAD
-		play_button.x = game.width/2 - play_button.width;
+		var play_button = new Sprite(143, 30);
+		play_button.image = game.assets["assets/play_button_small.png"];
+		play_button.x = game.width/2 - (play_button.width/2);
 		play_button.y = game.height/2;
-		
-		// Input logic for play_button
-        play_button.addEventListener('touchstart', function(mousePos){
-			game.replaceScene(play_scene);
-        });
-		
-		menu_scene.addChild(play_button);
-		
-		scratch_button = new Sprite(64, 32);
-		scratch_button.image = game.assets["assets/button.png"];
-		scratch_button.x = game.width/2 - scratch_button.width;
-		scratch_button.y = game.height - scratch_button.height;
-		
-		scratch_button.addEventListener('touchstart', function(){
-			game.replaceScene(scratch_scene);
-		});
-		
-		menu_scene.addChild(scratch_button);
-		
-		// -------------------------
-		// Define the Scratch Scene
-		// -------------------------
-		var rock01 = new Sprite(50, 50);
-		rock01.image = game.assets["assets/rock01.png"];
-		rock01.x = 0;
-		rock01.y = 0;
-		scratch_scene.addChild(rock01);
-		var rock02 = new Sprite(50, 50);
-		rock02.image = game.assets["assets/rock02.png"];
-		rock02.x = 0;
-		rock02.y = rock01.height + rock01.y;
-		scratch_scene.addChild(rock02);
-		var rock03 = new Sprite(50, 50);
-		rock03.image = game.assets["assets/rock03.png"];
-		rock03.x = 0;
-		rock03.y = rock02.height + rock02.y;
-		scratch_scene.addChild(rock03);
-		var rock04 = new Sprite(50, 50);
-		rock04.image = game.assets["assets/rock04.png"];
-		rock04.x = 0;
-		rock04.y = rock03.height + rock03.y;
-		scratch_scene.addChild(rock04);
-		var rock05 = new Sprite(50, 50);
-		rock05.image = game.assets["assets/rock05.png"];
-		rock05.x = 0;
-		rock05.y = rock04.height + rock04.y;
-		scratch_scene.addChild(rock05);
-		var rock06 = new Sprite(50, 50);
-		rock06.image = game.assets["assets/rock06.png"];
-		rock06.x = 0;
-		rock06.y = rock05.height + rock05.y;
-		scratch_scene.addChild(rock06);
-		var rock07 = new Sprite(50, 50);
-		rock07.image = game.assets["assets/rock07.png"];
-		rock07.x = 0;
-		rock07.y = rock06.height + rock06.y;
-		scratch_scene.addChild(rock07);
-=======
-		play_button.x = game.width/2 - 32;
-		play_button.y = game.height/2
 		menu_scene.addChild(play_button);
 		
 		// Input logic for play_button
         play_button.addEventListener('touchstart', function(){
 			game.replaceScene(play_scene);
         });
+		
+		// Display values for scratch_button
+		scratch_button = new Sprite(64, 32);
+		scratch_button.image = game.assets["assets/button.png"];
+		scratch_button.x = game.width/2 - scratch_button.width;
+		scratch_button.y = game.height - scratch_button.height;
+		menu_scene.addChild(scratch_button);
+		
+		// Input logic for scratch_button
+		scratch_button.addEventListener('touchstart', function(){
+			game.replaceScene(scratch_scene);
+		});
         
+		// Display values for options_button
+		var options_button = new Sprite(237, 30);
+		options_button.image = game.assets["assets/options_button_small.png"];
+		options_button.x = game.width/2 -(options_button.width/2);
+		options_button.y = game.height/2 + 45;
+		menu_scene.addChild(options_button);
+		
+		// Input logic for options_button
+        options_button.addEventListener('touchstart', function(){
+			game.replaceScene(options_scene);
+        });
+		
+		// Display values for credits_button
+		var credits_button = new Sprite(237, 30);
+		credits_button.image = game.assets["assets/credits_button_small.png"];
+		credits_button.x = game.width/2 -(credits_button.width/2);
+		credits_button.y = game.height/2 + 90;
+		menu_scene.addChild(credits_button);
+		
+		// Input logic for credits_button
+        credits_button.addEventListener('touchstart', function(){
+			game.replaceScene(credits_scene);
+        });
+		
+		// -------------------------
+		// Define Scratch Scene
+		// -------------------------
+
+		
+		// Display values for back_button
+		var sc_back_button = new Sprite(147, 30);
+		sc_back_button.image = game.assets["assets/back_button_small.png"];
+		sc_back_button.x = 0;
+		sc_back_button.y = game.height - sc_back_button.height;
+		scratch_scene.addChild(sc_back_button);
+		
+		// Input logic for back_button
+		sc_back_button.addEventListener('touchstart', function(){
+			game.replaceScene(menu_scene);
+        });
+		
         // -------------------------
 		// Define How To Play Scene
 		// -------------------------
@@ -117,23 +119,50 @@ window.onload = function(){
 		instructions.index = 1;
 		instructions.isDown = false;
 		instructions.addEventListener("enterframe", function(){
+		
 			if(game.input.a && !this.isDown) 
 			{
 				this.index++;
 				this.isDown = true;	
 			}
 			else if(!game.input.a) this.isDown = false;
-			
+		
 			if(this.index == 1) this.image = game.assets["assets/htp/drillOne.png"];
 			else if(this.index == 2 ) this.image = game.assets["assets/htp/drillTwo.png"];
 			else if(this.index == 3) this.image = game.assets["assets/htp/drillThree.png"];
 			else game.replaceScene(menu_scene);
 		});
 		
+		
+		
 		how_to_play_scene.addChild(instructions);
+		
+		game.pushScene(how_to_play_scene);
 
->>>>>>> origin/Cameron's-Branch
-		// ----------------------
+		// -------------------------
+		// Define the Scratch Scene
+		// -------------------------
+		
+		
+		
+		// -------------------------
+		// Define the Options Scene
+		// -------------------------
+		
+		// Display values for o_back_button
+		var o_back_button = new Sprite(147, 30);
+		o_back_button.image = game.assets["assets/back_button_small.png"];
+		o_back_button.x = 0;
+		o_back_button.y = game.height - o_back_button.height;
+		
+		// Input logic for back_button
+		o_back_button.addEventListener('touchstart', function(mousePos){
+			game.replaceScene(menu_scene);
+        });
+		
+		options_scene.addChild(o_back_button);
+		
+	// ----------------------
 		// Define the Play Scene
 		// ----------------------
 
@@ -168,10 +197,12 @@ window.onload = function(){
 		var blockGroup = [];
 		var hud = new Group();
 		
-		// Array of rock objects to pass onto hardness/streak tests
 		
-		// Topsoil, Soil, Stone, Talc, Gypsum, Calcite, Fluorite, Apatite, Feldspar, Quartz, Topaz, Corundum
-		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+<<<<<<< HEAD
+=======
+		// Topsoil, Soil, Stone, Talc, Kammerite, Gold, Mica, Copper, Pearl, Aragonite, Nickel, Fluorite, Granite, Obsidian, Quartz, Iron, Garnet, Diamond
+		var collectedRocks = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+>>>>>>> 69ca9c38f721d3155f1a6f447e7ccf01a71bcdf0
 		
 		// Defines the level with blocks (for STAGE)
 		stage.x = 0;
@@ -204,7 +235,8 @@ window.onload = function(){
 							{
 								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								
-								if(rand(20) == 1) block.frame = 4;
+								if(rand(20) == 1) block.frame = 5;			// gold
+								else if(rand(20) == 1) block.frame = 4;		// kammerite
 								else block.frame = 1;
 							}
 							else if(chunkType == 3)
@@ -213,14 +245,17 @@ window.onload = function(){
 								{
 									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
 									
-									if(rand(30) == 1) block.frame = 5;
+									if(rand(25) == 1) block.frame = 8;			// pearl
+									else if(rand(20) == 1) block.frame = 7;		// copper
+									else if(rand(20) == 1) block.frame = 6;		// mica
 									else block.frame = 1;
 								}
 								else
 								{
 								 	var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								 	
-								 	if(rand(40) == 1) block.frame = 6;
+								 	if(rand(40) == 1) block.frame = 10;			// nickel
+								 	else if(rand(30) == 1) block.frame = 9;		// aragonite
 								 	else block.frame = 2;	
 								}
 							}
@@ -228,10 +263,10 @@ window.onload = function(){
 							{
 								var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0, true);
 								
-								if(rand(70) == 1) block.frame = 9;
-								else if(rand(60) == 1) block.frame = 8;
-								else if(rand(50) == 1) block.frame = 7;
-							    block.frame = 2;
+								if(rand(70) == 1) block.frame = 14;			// obsidian
+								else if(rand(60) == 1) block.frame = 13;	// granite
+								else if(rand(50) == 1) block.frame = 12;	// fluorite
+								else block.frame = 2;
 							}
 							else if(chunkType == 5)
 							{
@@ -239,9 +274,10 @@ window.onload = function(){
 								{
 									var block = new PhyBoxSprite(32, 32, enchant.box2d.STATIC_SPRITE, 1.0, 0.5, 0.01, true);
 									
-									if(rand(100) == 1) block.frame = 12;
-									else if(rand(90) == 1) block.frame = 11;
-									else if(rand(80) == 1) block.frame = 10;
+									if(rand(100) == 1) block.frame = 18; 		// diamond
+									else if(rand(90) == 1) block.frame = 17;	// garnet
+									else if(rand(90) == 1) block.frame = 16;	// iron
+									else if(rand(80) == 1) block.frame = 15;	// quartz
 									else block.frame = 2;
 								}
 								else
@@ -327,24 +363,20 @@ window.onload = function(){
 		hudScore.x = 100;
 		hudScore.y = 100;
 		hudScore.addEventListener("enterframe", function(){
-			if(game.input.a) game.replaceScene(menu_scene);
+			if(game.input.a) game.replaceScene(scratch_scene);
 		});
-		
-<<<<<<< HEAD
+
 		// Display values for back_button
-		back_button = new Sprite(32, 32);
-=======
-		// Defines back button (for HUD)
-		var back_button = new Sprite(32, 32);
->>>>>>> origin/Cameron's-Branch
-		back_button.image = game.assets["assets/button.png"];
-		back_button.frame = 2;
-		back_button.x = 0;
-		back_button.y = 0;
-		back_button.addEventListener('touchstart', function(){
+		var p_back_button = new Sprite(147, 30);
+		p_back_button.image = game.assets["assets/back_button_small.png"];
+		p_back_button.x = 0;
+		p_back_button.y = game.height - p_back_button.height;
+		
+		// Input logic for back_button
+		p_back_button.addEventListener('touchstart', function(mousePos){
 			game.replaceScene(menu_scene);
         });
-		hud.addChild(back_button);
+		hud.addChild(p_back_button);
 		
 		// Defines cannon power bar (for HUD)
         var powerBar = new Bar(50, 325);
@@ -360,30 +392,13 @@ window.onload = function(){
         var cannon = new Sprite(100, 50);
         cannon.image = game.assets["assets/cannon/cannon.png"];    
 		cannon.x = 50;
-<<<<<<< HEAD
-		cannon.y = 250; 
-		cannon.power = 0.1;     		//Current cannon launch power
-		cannon.buildingPower = false;	// Prevents machine gun cannon
-        
-        // Logic for physics steps
-        play_scene.addEventListener("enterframe", function () {
-        	physicsWorld.step(game.fps);
-        	powerLabel.text = (CANNON_TEXT + cannon.power);
-        });
-        
-        // Logic for back_button
-		back_button.addEventListener('touchstart', function(){
-			game.replaceScene(menu_scene);
-        });
-=======
 		cannon.y = 215; 
 		cannon.power = 0.0;
 		cannon.buildingPower = false;
 		cannon.canFire = true;
 		cannon.gameOver = false;
-		cannon.ammo = 1;
+		cannon.ammo = 4;
 		cannon.cargo = 0;
->>>>>>> origin/Cameron's-Branch
 
         cannon.addEventListener("enterframe", function(){
         	if(game.input.a && !cannon.buildingPower && cannon.canFire) cannon.buildingPower = true;
@@ -488,11 +503,11 @@ window.onload = function(){
         		stage.removeChild(cannonStack);
         		stage.addChild(hudScore);
         		hudLabel.x = hudScore.x + 100;
-        		hudLabel.y = hudScore.y + 71;
+        		hudLabel.y = hudScore.y + 66;
         		
         		var totalScore = 0;
         		
-        		for(var i = 0; i < 11; i++)
+        		for(var i = 0; i < 17; i++)
         		{
         			totalScore += (collectedRocks[i] * ((i + 1) * 5));
         		}
@@ -509,6 +524,12 @@ window.onload = function(){
         						 "x  " + collectedRocks[9] + " = " + collectedRocks[9] * 50 + "<br/>" +
         						 "x  " + collectedRocks[10] + " = " + collectedRocks[10] * 55 + "<br/>" +
         						 "x  " + collectedRocks[11] + " = " + collectedRocks[11] * 60 + "<br/>" +
+        					     "x  " + collectedRocks[12] + " = " + collectedRocks[11] * 65 + "<br/>" +
+        						 "x  " + collectedRocks[13] + " = " + collectedRocks[11] * 70 + "<br/>" +
+        						 "x  " + collectedRocks[14] + " = " + collectedRocks[11] * 75 + "<br/>" +
+        						 "x  " + collectedRocks[15] + " = " + collectedRocks[11] * 80 + "<br/>" +
+        						 "x  " + collectedRocks[16] + " = " + collectedRocks[11] * 85 + "<br/>" +
+        						 "x  " + collectedRocks[17] + " = " + collectedRocks[11] * 90 + "<br/>" +
         						 totalScore);
         	}
         });
