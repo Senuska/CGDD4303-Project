@@ -387,7 +387,7 @@ window.onload = function(){
         
         // Defines cannon object (for STAGE)
         var cannon = new Sprite(100, 50);
-        cannon.image = game.assets["assets/cannon/cannon.png"];    
+        cannon.image = game.assets["assets/cannon/Cannon.png"];    
 		cannon.x = 50;
 		cannon.y = 215; 
 		cannon.power = 0.0;
